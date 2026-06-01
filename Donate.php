@@ -1,150 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+$pageTitle = 'Donate';
+$pageDesc  = 'Make a donation to Yati Foundation and help fund education, healthcare and livelihoods for those in need.';
+include 'Includes/head.php';
+?>
 
-<head>
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-
-    <title>Yati Foundation</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-
-    <!-- Additional CSS Files -->
-    <link rel="stylesheet" href="assets/css/fontawesome.css">
-    <link rel="stylesheet" href="assets/css/templatemo-villa-agency.css">
-    <link rel="stylesheet" href="assets/css/owl.css">
-    <link rel="stylesheet" href="assets/css/animate.css">
-    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
-    <style>
-        .nav-item {
-            padding-left: 3em;
-        }
-    </style>
-    <!--
-
-TemplateMo 591 villa agency
-
-https://templatemo.com/tm-591-villa-agency
-
--->
-</head>
-
-<body>
-
-    <!-- ***** Preloader Start ***** -->
-    <div id="js-preloader" class="js-preloader">
-        <div class="preloader-inner">
-            <span class="dot"></span>
-            <div class="dots">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
+<section class="page-heading">
+    <div class="container">
+        <h1>Donate</h1>
+        <div class="breadcrumb-nav"><a href="index.php">Home</a> &nbsp;/&nbsp; Donate</div>
     </div>
-    <!-- ***** Preloader End ***** -->
+</section>
 
-    <?php include('Includes/header.php') ?>
-    <!-- ***** Header Area End ***** -->
-
-    <div class="page-heading header-text">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <span class="breadcrumb"><a href="#">Home</a> / Donate</span>
-                    <h3>Donate</h3>
-                </div>
+<section class="section-pad">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-5 reveal">
+                <span class="eyebrow">Make a Difference</span>
+                <h2 class="section-title">Your gift changes lives</h2>
+                <p>Every contribution &mdash; big or small &mdash; helps us bring education, healthcare and hope to
+                    families who need it most. 100% of your donation goes directly to our programmes on the ground.</p>
+                <ul class="feature-list">
+                    <li><i class="fa fa-check"></i><span><b>₹500</b> can provide school supplies for a child for a term.</span></li>
+                    <li><i class="fa fa-check"></i><span><b>₹2,000</b> can fund a community health check-up camp.</span></li>
+                    <li><i class="fa fa-check"></i><span><b>₹5,000</b> can support vocational training for a young adult.</span></li>
+                </ul>
             </div>
-        </div>
-    </div>
-
-    <div class="contact-page section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
+            <div class="col-lg-7 reveal">
+                <div class="form-card">
                     <form id="contact-form" action="Includes/code.php?msg=add-donate" method="post">
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-md-6">
                                 <fieldset>
                                     <label for="name">Full Name</label>
-                                    <input type="text" name="name" id="name" placeholder="Your Name..."
-                                        autocomplete="on" required>
+                                    <input type="text" name="name" id="name" placeholder="Your name" required>
                                 </fieldset>
                             </div>
-                            <div class="col-lg-12">
+                            <div class="col-md-6">
                                 <fieldset>
                                     <label for="mobile">Mobile Number</label>
-                                    <input type="number" name="mobile" id="mobile" placeholder="Your Mobile Number..."
-                                        required="">
+                                    <input type="tel" name="mobile" id="mobile" placeholder="Your mobile number" required>
                                 </fieldset>
                             </div>
-                            <div class="col-lg-12">
+                            <div class="col-12">
                                 <fieldset>
                                     <label for="email">Email Address</label>
-                                    <input type="email" name="email" id="email" placeholder="Your E-mail..."
-                                        required="">
+                                    <input type="email" name="email" id="email" placeholder="you@example.com" required>
                                 </fieldset>
                             </div>
-                            <div class="col-lg-12">
+                            <div class="col-12">
                                 <fieldset>
-                                    <label for="amount">Amount</label>
-                                    <input type="number" name="amount" id="amount" placeholder="Amount..."
-                                        autocomplete="on">
+                                    <label>Choose an amount (₹)</label>
+                                    <div class="amount-chips">
+                                        <span class="amount-chip" data-amount="500">₹500</span>
+                                        <span class="amount-chip" data-amount="1000">₹1,000</span>
+                                        <span class="amount-chip" data-amount="2000">₹2,000</span>
+                                        <span class="amount-chip" data-amount="5000">₹5,000</span>
+                                    </div>
+                                    <input type="number" name="amount" id="amount" min="1" placeholder="Or enter a custom amount" required>
                                 </fieldset>
                             </div>
-                            <div class="col-lg-12">
+                            <div class="col-12">
                                 <fieldset>
                                     <label for="donation">Purpose of Donation</label>
-                                    <textarea name="donation" id="donation"
-                                        placeholder="Purpose of Donation"></textarea>
+                                    <textarea name="donation" id="donation" placeholder="e.g. Education, Healthcare, General fund"></textarea>
                                 </fieldset>
                             </div>
-                            <div class="col-lg-12">
+                            <div class="col-12">
                                 <fieldset>
                                     <label for="address">Address</label>
-                                    <textarea name="address" id="address" placeholder="Address"></textarea>
+                                    <textarea name="address" id="address" placeholder="Your address"></textarea>
                                 </fieldset>
                             </div>
-                            <div class="col-lg-12">
-                                <fieldset>
-                                    <button type="submit" id="form-submit" class="orange-button" name="btnDonate">Donate
-                                        Now</button>
-                                </fieldset>
+                            <div class="col-12">
+                                <button type="submit" class="orange-button w-100" name="btnDonate">
+                                    <i class="fa fa-heart"></i> Donate Now
+                                </button>
                             </div>
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
+</section>
 
-    <footer>
-        <div class="container">
-            <div class="col-lg-8">
-                <p>Copyright © 2048 Villa Agency Co., Ltd. All rights reserved.
-
-                    Design: <a rel="nofollow" href="https://templatemo.com" target="_blank">TemplateMo</a> Distribution:
-                    <a href="https://themewagon.com">ThemeWagon</a>
-                </p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Scripts -->
-    <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/isotope.min.js"></script>
-    <script src="assets/js/owl-carousel.js"></script>
-    <script src="assets/js/counter.js"></script>
-    <script src="assets/js/custom.js"></script>
-
-</body>
-
-</html>
+<?php include 'Includes/footer.php'; ?>

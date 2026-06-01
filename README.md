@@ -1,72 +1,78 @@
-This is a [Astro](https://nextjs.org/) starter kit bootstrapped with `npm create astro@latest -- --template basics`.
+# Yati Foundation
 
-## Getting Started
+A modern, fully responsive website for **Yati Foundation**, a non-profit organisation
+working in education, healthcare and community livelihoods.
 
-First, run the development server:
+Built with **PHP + MySQL** and a custom, mobile-first front-end on top of Bootstrap 5.
 
-```bash
-npm run dev
-```
+## ✨ Features
 
-You can also run the Astro template easily using Wasmer (check out the [install guide](https://docs.wasmer.io/install)):
+- Modern, responsive design (mobile, tablet, desktop) with a custom design system
+- Dynamic hero slider, impact counters, gallery lightbox and news cards
+- Public pages: Home, About, Volunteer, Donate, Gallery, News, Contact
+- Admin dashboard to manage sliders, gallery, news, donations, volunteers and contacts
+- Secure backend: prepared statements, hashed passwords and validated file uploads
 
-```bash
-npm run build
-wasmer run . -- --port 3000
-```
+## 🛠️ Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Layer     | Technology                          |
+| :-------- | :---------------------------------- |
+| Backend   | PHP 8 (mysqli, prepared statements) |
+| Database  | MySQL / MariaDB                     |
+| Front-end | Bootstrap 5.3 + custom CSS/JS       |
+| Server    | Apache (XAMPP)                      |
 
+## 🚀 Getting Started (XAMPP)
 
-## Deploy on Wasmer Edge
+1. Place this folder inside `htdocs/` (e.g. `xampp/htdocs/YatiFoundation`).
+2. Start **Apache** and **MySQL** from the XAMPP control panel.
+3. Open **phpMyAdmin** and create a database named `yatifoundation`.
+4. Import the schema from [`Database/database.php`](Database/database.php).
+5. Visit `http://localhost/YatiFoundation/`.
 
-The easiest way to deploy your Astro App is to use the [Wasmer Edge](https://wasmer.io/products/edge).
+### Database configuration
 
-Live example: https://astro-wasmer-starter.wasmer.app/
+Connection settings live in [`Includes/db.php`](Includes/db.php) and default to the
+standard XAMPP values (`localhost` / `root` / no password). For production you can
+override them with environment variables: `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`.
 
-First, you'll need to run `npm run build`, and then, to deploy to Wasmer Edge:
+### Admin access
 
-```bash
-wasmer deploy
-```
+- URL: `http://localhost/YatiFoundation/admin/`
+- Email: `admin@gmail.com`
+- Password: `admin@123`
 
-## 🚀 Project Structure
+> The default password is stored as a bcrypt hash. **Change it after first login**
+> via the admin panel's *Change Password* page.
 
-Inside of your Astro project, you'll see the following folders and files:
+## 📁 Project Structure
 
 ```text
 /
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/
-│   │   └── Card.astro
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
+├── index.php              # Home page
+├── AboutUs.php            # About page
+├── Donate.php             # Donation form
+├── Vounteer.php           # Volunteer form
+├── Gallery.php            # Gallery
+├── News.php               # News & updates
+├── ContactUs.php          # Contact form + map
+├── Includes/
+│   ├── db.php             # DB connection + helpers (upload, flash)
+│   ├── head.php           # Shared <head> + preloader
+│   ├── header.php         # Responsive navbar + login modal
+│   ├── footer.php         # Shared footer + scripts
+│   └── code.php           # Public form handlers (secure)
+├── admin/                 # Admin dashboard (Bootstrap 5)
+├── assets/                # CSS, JS, images, fonts
+├── vendor/                # Bootstrap & jQuery
+└── Database/database.php  # SQL schema + seed data
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🔒 Security notes
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+This codebase was hardened from its original form:
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- All SQL uses **prepared statements** (no more string-concatenated queries).
+- Admin passwords are **bcrypt-hashed**; legacy plaintext logins auto-upgrade.
+- Uploads are validated by **real MIME type** and stored with random filenames.
+- Admin pages enforce a **session guard**, and debug output was removed.

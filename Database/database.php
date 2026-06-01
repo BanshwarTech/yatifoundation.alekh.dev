@@ -40,8 +40,11 @@ CREATE TABLE `admin` (
 -- Dumping data for table `admin`
 --
 
+-- Default admin credentials:  email: admin@gmail.com   password: admin@123
+-- The password below is a bcrypt hash. (Legacy plaintext logins are also
+-- auto-upgraded to a hash on first successful sign-in.)
 INSERT INTO `admin` (`id`, `userId`, `password`, `usertype`, `isDel`, `datetime`) VALUES
-(1, 'admin@gmail.com', 'admin@123', 'admin', 1, '2024-02-19');
+(1, 'admin@gmail.com', '$2y$12$Vzo7yPpKXVtFldzsdqarbuUloODTK5E7P9tj8jyVont1KR/afccbS', 'admin', 1, '2024-02-19');
 
 -- --------------------------------------------------------
 

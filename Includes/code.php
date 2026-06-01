@@ -1,116 +1,98 @@
 <?php
 session_start();
 include_once('db.php');
-$message = "Email Or Password Does Not Match";
 
-$msg = $message = $_REQUEST['msg'];
-// echo $msg;
+$msg = $_REQUEST['msg'] ?? '';
 
 switch ($msg) {
-    case "login":
 
+    /* ---------------------------------------------------------------- LOGIN */
+    case 'login':
         if (isset($_POST['btnlogin'])) {
+            $email    = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
 
-            $email = $_POST['email'];
-            $password = $_POST['password'];
-            echo $email;
-            echo $password;
+            $stmt = mysqli_prepare($con, "SELECT id, userId, password, usertype FROM admin WHERE userId = ? AND isDel = 1 LIMIT 1");
+            mysqli_stmt_bind_param($stmt, 's', $email);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            $row = mysqli_fetch_assoc($result);
 
-            $select = "select * from admin where userId='$email' and password='$password'";
+            if ($row && $row['usertype'] === 'admin') {
+                $stored = $row['password'];
+                $ok = false;
 
-            $result = mysqli_query($con, $select);
-
-            if (mysqli_num_rows($result) > 0) {
-
-                while ($row = mysqli_fetch_array($result)) {
-
-                    if ($row['usertype'] == "admin" and $row['isDel'] == 1) {
-
-                        $_SESSION['loginAdmin'] = $row['userId'];
-                        header('Location: ../admin/index.php');
-                    }
+                // Supports bcrypt hashes and transparently upgrades legacy plaintext.
+                if (password_get_info($stored)['algo']) {
+                    $ok = password_verify($password, $stored);
+                } elseif (hash_equals($stored, $password)) {
+                    $ok = true;
+                    $newHash = password_hash($password, PASSWORD_DEFAULT);
+                    $up = mysqli_prepare($con, "UPDATE admin SET password = ? WHERE id = ?");
+                    mysqli_stmt_bind_param($up, 'si', $newHash, $row['id']);
+                    mysqli_stmt_execute($up);
                 }
-            } else {
-                echo '<script>alert("Please enter correct email and password.");';
-                echo 'window.location.href = "index.php";';
-                echo '</script>';
-                exit;
+
+                if ($ok) {
+                    session_regenerate_id(true);
+                    $_SESSION['loginAdmin'] = $row['userId'];
+                    header('Location: ../admin/index.php');
+                    exit;
+                }
             }
+            flash_redirect('Please enter correct email and password.', '../index.php');
         }
         break;
 
-
+    /* ------------------------------------------------------------ VOLUNTEER */
     case 'add-volunteer':
-        $file = $_FILES['profile']['name'];
-        $type = $_FILES['profile']['type'];
-        $size = $_FILES['profile']['size'];
-        $location = "../admin/upload/";
-        $tmpname = $_FILES['profile']['tmp_name'];
-        echo $file, "<br/>", $type, '<br/>', $size, '<br/>', $location, '<br/>', $tmpname, '<br/>';
         if (isset($_POST['btnVounteer'])) {
-            if ($file != null) {
-                if ($type == "image/png" or $type == "image/jpeg" or $type == "image/jpg") {
-                    $query = "INSERT INTO vounteer (`name`, `email`, `mobile`, `profile`, `address`, `addedOn`, `gender`, `isDel`) VALUES('" . $_POST["name"] . "','" . $_POST["email"] . "','" . $_POST["mobile"] . "','" . $file . "','" . $_POST["address"] . "','" . date("Y-m-d") . "','" . $_POST["gender"] . "','true')";
-                    echo $query;
-                    move_uploaded_file($tmpname, $location . $file);
-                    $result = mysqli_query($con, $query);
-                    if ($result) {
-                        echo '<script>alert("Added Successfully.");';
-                        echo 'window.location.href = "../Vounteer.php";';
-                        echo '</script>';
-                        exit;
-                    } else {
-                        echo '<script>alert("Not Added.");';
-                        echo 'window.location.href = "../Vounteer.php";';
-                        echo '</script>';
-                        exit;
-                    }
-                }
-            }
-        }
+            $name    = trim($_POST['name'] ?? '');
+            $email   = trim($_POST['email'] ?? '');
+            $mobile  = trim($_POST['mobile'] ?? '');
+            $address = trim($_POST['address'] ?? '');
+            $gender  = trim($_POST['gender'] ?? '');
+            $profile = isset($_FILES['profile']) ? (handle_image_upload($_FILES['profile'], __DIR__ . '/../admin/upload') ?? '') : '';
 
+            $stmt = mysqli_prepare($con, "INSERT INTO vounteer (name, email, mobile, profile, address, addedOn, gender, isDel) VALUES (?,?,?,?,?,?,?,1)");
+            $today = date('Y-m-d');
+            mysqli_stmt_bind_param($stmt, 'sssssss', $name, $email, $mobile, $profile, $address, $today, $gender);
+            $ok = mysqli_stmt_execute($stmt);
+            flash_redirect($ok ? 'Thank you! Your volunteer application was received.' : 'Something went wrong. Please try again.', '../Vounteer.php');
+        }
         break;
 
+    /* --------------------------------------------------------------- DONATE */
     case 'add-donate':
         if (isset($_POST['btnDonate'])) {
-            $amount = $_POST["amount"];
-            $amountDecimal = number_format($amount / 100, 2);
-            echo $amountDecimal;
-            $query = "INSERT INTO donate ( `name`, `mobile`, `email`, `amount`, `purposeofDonation`, `address`, `addedOn`, `isDel`) VALUES('" . $_POST["name"] . "','" . $_POST["mobile"] . "','" . $_POST["email"] . "','" . $amountDecimal . "','" . $_POST["donation"] . "','" . $_POST["address"] . "','" . date("Y-m-d") . "','true')";
-            echo $query;
-            $result = mysqli_query($con, $query);
-            if ($result) {
-                echo '<script>alert("Added Successfully.");';
-                echo 'window.location.href = "../Donate.php";';
-                echo '</script>';
-                exit;
-            } else {
-                echo '<script>alert("Not Added.");';
-                echo 'window.location.href = "../Donate.php";';
-                echo '</script>';
-                exit;
-            }
-        }
+            $name    = trim($_POST['name'] ?? '');
+            $mobile  = trim($_POST['mobile'] ?? '');
+            $email   = trim($_POST['email'] ?? '');
+            $amount  = (float) ($_POST['amount'] ?? 0);
+            $purpose = trim($_POST['donation'] ?? '');
+            $address = trim($_POST['address'] ?? '');
 
+            $stmt = mysqli_prepare($con, "INSERT INTO donate (name, mobile, email, amount, purposeofDonation, address, addedOn, isDel) VALUES (?,?,?,?,?,?,?,1)");
+            $today = date('Y-m-d');
+            mysqli_stmt_bind_param($stmt, 'sssdsss', $name, $mobile, $email, $amount, $purpose, $address, $today);
+            $ok = mysqli_stmt_execute($stmt);
+            flash_redirect($ok ? 'Thank you for your generous donation!' : 'Something went wrong. Please try again.', '../Donate.php');
+        }
         break;
 
+    /* -------------------------------------------------------------- CONTACT */
     case 'add-contact':
         if (isset($_POST['btnContact'])) {
-            $query = "INSERT INTO contact ( `name`, `email`, `subject`, `message`, `addedOn`, `isDel`) VALUES('" . $_POST["name"] . "','" . $_POST["email"] . "','" . $_POST["subject"] . "','" . $_POST["message"] . "','" . date("Y-m-d") . "','true')";
-            echo $query;
-            $result = mysqli_query($con, $query);
-            if ($result) {
-                echo '<script>alert("Added Successfully.");';
-                echo 'window.location.href = "../ContactUs.php";';
-                echo '</script>';
-                exit;
-            } else {
-                echo '<script>alert("Not Added.");';
-                echo 'window.location.href = "../ContactUs.php";';
-                echo '</script>';
-                exit;
-            }
-        }
+            $name    = trim($_POST['name'] ?? '');
+            $email   = trim($_POST['email'] ?? '');
+            $subject = trim($_POST['subject'] ?? '');
+            $message = trim($_POST['message'] ?? '');
 
+            $stmt = mysqli_prepare($con, "INSERT INTO contact (name, email, subject, message, addedOn, isDel) VALUES (?,?,?,?,?,1)");
+            $today = date('Y-m-d');
+            mysqli_stmt_bind_param($stmt, 'sssss', $name, $email, $subject, $message, $today);
+            $ok = mysqli_stmt_execute($stmt);
+            flash_redirect($ok ? 'Thank you for reaching out! We will get back to you soon.' : 'Something went wrong. Please try again.', '../ContactUs.php');
+        }
         break;
 }

@@ -1,7 +1,8 @@
 <?php
 session_start();
-if (!$_SESSION["loginAdmin"]) {
-    header('location:../index.php');
+if (empty($_SESSION["loginAdmin"])) {
+    header("location:../index.php");
+    exit;
 }
 include_once('../Includes/db.php');
 ?>
