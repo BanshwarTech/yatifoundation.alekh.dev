@@ -37,17 +37,25 @@ include 'Includes/head.php';
             <!-- Article -->
             <div class="col-lg-8 reveal">
                 <article class="article">
-                    <div class="article-img">
-                        <img src="admin/upload/<?php echo rawurlencode($article['file']); ?>"
-                            alt="<?php echo htmlspecialchars($article['title']); ?>">
-                    </div>
+                    <h2 class="article-title"><?php echo htmlspecialchars($article['title']); ?></h2>
                     <div class="article-meta">
                         <span><i class="fa fa-calendar me-1"></i><?php echo htmlspecialchars($article['addedOn']); ?></span>
                         <span><i class="fa fa-folder me-1"></i>News &amp; Updates</span>
                     </div>
-                    <h2 class="article-title"><?php echo htmlspecialchars($article['title']); ?></h2>
+                    <div class="article-img">
+                        <img src="admin/upload/<?php echo rawurlencode($article['file']); ?>"
+                            alt="<?php echo htmlspecialchars($article['title']); ?>">
+                    </div>
                     <div class="article-body">
-                        <?php echo nl2br(htmlspecialchars($article['description'])); ?>
+                        <?php
+                        $body = trim($article['description']);
+                        if ($body !== '') {
+                            echo nl2br(htmlspecialchars($body));
+                        } else {
+                            echo '<p>' . htmlspecialchars($article['title']) . '</p>';
+                            echo '<p class="text-muted">Full details for this story are coming soon. Stay tuned for more updates from Yati Foundation.</p>';
+                        }
+                        ?>
                     </div>
 
                     <div class="article-share">

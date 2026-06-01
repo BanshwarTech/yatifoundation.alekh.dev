@@ -28,7 +28,7 @@ $pageDesc  = isset($pageDesc) ? $pageDesc : 'Yati Foundation — empowering comm
 
     <!-- Icons + theme -->
     <link rel="stylesheet" href="assets/css/fontawesome.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=<?php echo @filemtime(__DIR__ . '/../assets/css/style.css'); ?>">
 </head>
 
 <body>
