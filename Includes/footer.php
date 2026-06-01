@@ -31,6 +31,7 @@
                     <li><a href="Donate.php">Donate</a></li>
                     <li><a href="Vounteer.php">Volunteer</a></li>
                     <li><a href="ContactUs.php">Contact Us</a></li>
+                    <li><a href="login.php"><i class="fa fa-lock me-1"></i>Admin Login</a></li>
                 </ul>
             </div>
             <div class="col-lg-4 col-md-6">

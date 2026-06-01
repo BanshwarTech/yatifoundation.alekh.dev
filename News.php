@@ -30,13 +30,14 @@ include 'Includes/head.php';
             ?>
                     <div class="col-lg-4 col-md-6 reveal">
                         <article class="news-card">
-                            <div class="news-thumb">
+                            <a class="news-thumb" href="NewsDetail.php?id=<?php echo (int) $row['nId']; ?>">
                                 <img src="<?php echo $img; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" loading="lazy">
-                            </div>
+                            </a>
                             <div class="news-body">
                                 <span class="category"><i class="fa fa-calendar me-1"></i><?php echo htmlspecialchars($row['addedOn']); ?></span>
-                                <h4><?php echo htmlspecialchars($row['title']); ?></h4>
-                                <p><?php echo nl2br(htmlspecialchars(mb_strimwidth($row['description'], 0, 200, '…'))); ?></p>
+                                <h4><a href="NewsDetail.php?id=<?php echo (int) $row['nId']; ?>"><?php echo htmlspecialchars($row['title']); ?></a></h4>
+                                <p><?php echo nl2br(htmlspecialchars(mb_strimwidth($row['description'], 0, 160, '…'))); ?></p>
+                                <a class="news-more" href="NewsDetail.php?id=<?php echo (int) $row['nId']; ?>">Read More <i class="fa fa-arrow-right"></i></a>
                             </div>
                         </article>
                     </div>

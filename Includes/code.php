@@ -40,7 +40,7 @@ switch ($msg) {
                     exit;
                 }
             }
-            flash_redirect('Please enter correct email and password.', '../index.php');
+            flash_redirect('Please enter correct email and password.', '../login.php');
         }
         break;
 
