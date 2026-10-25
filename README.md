@@ -1,78 +1,42 @@
-# Yati Foundation
+# yatifoundation.alekh.dev
+
+## Overview
 
 A modern, fully responsive website for **Yati Foundation**, a non-profit organisation
-working in education, healthcare and community livelihoods.
 
-Built with **PHP + MySQL** and a custom, mobile-first front-end on top of Bootstrap 5.
+## Technology stack
 
-## ✨ Features
+- PHP
 
-- Modern, responsive design (mobile, tablet, desktop) with a custom design system
-- Dynamic hero slider, impact counters, gallery lightbox and news cards
-- Public pages: Home, About, Volunteer, Donate, Gallery, News, Contact
-- Admin dashboard to manage sliders, gallery, news, donations, volunteers and contacts
-- Secure backend: prepared statements, hashed passwords and validated file uploads
+## Repository structure
 
-## 🛠️ Tech Stack
+- `.gitignore`
+- `AboutUs.php`
+- `ContactUs.php`
+- `Database/database.php`
+- `Donate.php`
+- `Gallery.php`
+- `Includes/code.php`
+- `Includes/db.php`
+- `Includes/footer.php`
+- `Includes/head.php`
+- `Includes/header.php`
+- `LICENSE`
 
-| Layer     | Technology                          |
-| :-------- | :---------------------------------- |
-| Backend   | PHP 8 (mysqli, prepared statements) |
-| Database  | MySQL / MariaDB                     |
-| Front-end | Bootstrap 5.3 + custom CSS/JS       |
-| Server    | Apache (XAMPP)                      |
+## Setup
 
-## 🚀 Getting Started (XAMPP)
+1. Clone this repository and enter its directory.
+2. Review the dependency manifests and configure required environment variables using an example environment file if provided.
+3. Install dependencies using the package manager for this project.
+4. Configure the required database/services and run the project's migrations or setup commands, if applicable.
+5. Start the development server using the commands documented in the dependency manifest or application configuration.
 
-1. Place this folder inside `htdocs/` (e.g. `xampp/htdocs/YatiFoundation`).
-2. Start **Apache** and **MySQL** from the XAMPP control panel.
-3. Open **phpMyAdmin** and create a database named `yatifoundation`.
-4. Import the schema from [`Database/database.php`](Database/database.php).
-5. Visit `http://localhost/YatiFoundation/`.
+## Development notes
 
-### Database configuration
+- Never commit secrets, access tokens, passwords, or production environment files.
+- Check configuration and dependency manifests before deploying.
+- Replace these general setup notes with project-specific commands when the exact runtime requirements are confirmed.
 
-Connection settings live in [`Includes/db.php`](Includes/db.php) and default to the
-standard XAMPP values (`localhost` / `root` / no password). For production you can
-override them with environment variables: `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`.
+## License
 
-### Admin access
-
-- URL: `http://localhost/YatiFoundation/admin/`
-- Email: `admin@gmail.com`
-- Password: `admin@123`
-
-> The default password is stored as a bcrypt hash. **Change it after first login**
-> via the admin panel's *Change Password* page.
-
-## 📁 Project Structure
-
-```text
-/
-├── index.php              # Home page
-├── AboutUs.php            # About page
-├── Donate.php             # Donation form
-├── Vounteer.php           # Volunteer form
-├── Gallery.php            # Gallery
-├── News.php               # News & updates
-├── ContactUs.php          # Contact form + map
-├── Includes/
-│   ├── db.php             # DB connection + helpers (upload, flash)
-│   ├── head.php           # Shared <head> + preloader
-│   ├── header.php         # Responsive navbar + login modal
-│   ├── footer.php         # Shared footer + scripts
-│   └── code.php           # Public form handlers (secure)
-├── admin/                 # Admin dashboard (Bootstrap 5)
-├── assets/                # CSS, JS, images, fonts
-├── vendor/                # Bootstrap & jQuery
-└── Database/database.php  # SQL schema + seed data
-```
-
-## 🔒 Security notes
-
-This codebase was hardened from its original form:
-
-- All SQL uses **prepared statements** (no more string-concatenated queries).
-- Admin passwords are **bcrypt-hashed**; legacy plaintext logins auto-upgrade.
-- Uploads are validated by **real MIME type** and stored with random filenames.
-- Admin pages enforce a **session guard**, and debug output was removed.
+Check this repository for a LICENSE file before redistributing or reusing the project.
