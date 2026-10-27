@@ -12,7 +12,7 @@ $DB_NAME = getenv('DB_NAME') ?: 'yatifoundation';
 // Throw exceptions on mysqli errors so failures are caught, not echoed silently.
 mysqli_report(MYSQLI_REPORT_OFF);
 
-$con = mysqli_connect($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME);
+$con = mysqli_connect("localhost", "alekh_yati", "AbYv]lHP^QH8RnJ=", "alekh_yati");;
 if (!$con) {
     http_response_code(500);
     exit('Service temporarily unavailable. Please try again later.');

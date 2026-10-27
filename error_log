@@ -1,0 +1,4 @@
+[01-Jun-2026 17:18:25 Asia/Kolkata] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/alekh/public_html/corephp/yatifoundation.alekh.dev/Includes/db.php on line 15
+[01-Jun-2026 17:18:29 Asia/Kolkata] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/alekh/public_html/corephp/yatifoundation.alekh.dev/Includes/db.php on line 15
+[01-Jun-2026 17:18:32 Asia/Kolkata] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/alekh/public_html/corephp/yatifoundation.alekh.dev/Includes/db.php on line 15
+[01-Jun-2026 17:18:35 Asia/Kolkata] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/alekh/public_html/corephp/yatifoundation.alekh.dev/Includes/db.php on line 15
