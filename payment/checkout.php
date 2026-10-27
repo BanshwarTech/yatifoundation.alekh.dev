@@ -1,0 +1,26 @@
+<?php
+session_start();
+require_once __DIR__ . '/../Includes/db.php';
+require_once __DIR__ . '/gateways.php';
+$token = (string) ($_GET['token'] ?? '');
+$payment = payment_find_by_token($con, $token);
+if (!$payment) { http_response_code(404); exit('Payment session not found.'); }
+$gateways = payment_gateway_configs();
+$gateway = $gateways[$payment['gateway']] ?? null;
+$base = payment_base_url();
+?>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Secure donation checkout | Yati Foundation</title><link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"><link href="../assets/css/fontawesome.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>body{font-family:'DM Sans',sans-serif;background:#f4f7fb;color:#14213d;min-height:100vh;display:grid;place-items:center;padding:24px}.pay-card{width:min(100%,560px);padding:clamp(28px,6vw,52px);border:1px solid #e4eaf0;border-radius:26px;background:#fff;box-shadow:0 24px 70px #14213d12;text-align:center}.pay-mark{display:grid;width:62px;height:62px;place-items:center;margin:0 auto 22px;border-radius:18px;color:#f35525;background:#fff1ec;font-size:1.45rem}.pay-amount{margin:20px 0;color:#138a72;font-size:2.1rem;font-weight:800}.pay-btn{width:100%;padding:14px 20px;border:0;border-radius:999px;color:#fff;background:#f35525;font-weight:700}.pay-btn:hover{background:#d63e15}.muted{color:#737f90;font-size:.94rem}</style></head><body><main class="pay-card"><span class="pay-mark"><i class="fa fa-heart"></i></span><h1 class="h3 fw-bold">Secure donation checkout</h1><p class="muted">Your donation is processed by <?php echo htmlspecialchars($gateway['label'] ?? ucfirst($payment['gateway']), ENT_QUOTES, 'UTF-8'); ?>. Card and bank details are entered on the provider’s secure checkout.</p><div class="pay-amount">₹<?php echo number_format((float)$payment['amount'], 2); ?></div>
+<?php if ($payment['status'] === 'paid'): ?><div class="alert alert-success">This contribution has already been verified.</div><a class="btn btn-outline-secondary rounded-pill px-4" href="../index.php">Return to website</a>
+<?php elseif (!$gateway || !$gateway['enabled']): ?><div class="alert alert-warning">This payment provider is temporarily unavailable. Your pledge is still recorded; contact the foundation for assistance.</div><a class="btn btn-outline-secondary rounded-pill px-4" href="../contactus.php">Contact us</a>
+<?php elseif ($payment['gateway'] === 'razorpay'): ?>
+<button id="payButton" class="pay-btn" type="button">Continue with Razorpay</button><p class="muted mt-3 mb-0">Order reference: <?php echo htmlspecialchars($payment['internalOrderId'], ENT_QUOTES, 'UTF-8'); ?></p>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script><script>
+const payButton=document.getElementById('payButton');payButton.addEventListener('click',function(){payButton.disabled=true;const checkout=new Razorpay({key:<?php echo json_encode($gateway['key_id']); ?>,amount:<?php echo (int)round((float)$payment['amount']*100); ?>,currency:'INR',name:'Yati Foundation',description:'Donation',order_id:<?php echo json_encode($payment['gatewayOrderId']); ?>,callback_url:undefined,handler:async function(response){payButton.textContent='Verifying payment…';try{const result=await fetch('verify.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({token:<?php echo json_encode($token); ?>,razorpay_order_id:response.razorpay_order_id,razorpay_payment_id:response.razorpay_payment_id,razorpay_signature:response.razorpay_signature})});const data=await result.json();location.href='return.php?token='+encodeURIComponent(<?php echo json_encode($token); ?>)+'&result='+(data.ok?'success':'pending')}catch(e){location.href='return.php?token='+encodeURIComponent(<?php echo json_encode($token); ?>)+'&result=pending'}},modal:{ondismiss:function(){payButton.disabled=false;payButton.textContent='Continue with Razorpay'}}});checkout.open()});
+</script>
+<?php elseif ($payment['gateway'] === 'cashfree' && $payment['gatewaySessionId']): ?>
+<button id="payButton" class="pay-btn" type="button">Continue with Cashfree</button><p class="muted mt-3 mb-0">Order reference: <?php echo htmlspecialchars($payment['internalOrderId'], ENT_QUOTES, 'UTF-8'); ?></p>
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script><script>
+const payButton=document.getElementById('payButton');payButton.addEventListener('click',async function(){payButton.disabled=true;try{const cashfree=Cashfree({mode:<?php echo json_encode($gateway['mode']); ?>});await cashfree.checkout({paymentSessionId:<?php echo json_encode($payment['gatewaySessionId']); ?>,redirectTarget:'_self'})}catch(e){payButton.disabled=false;payButton.textContent='Retry Cashfree checkout'}});
+</script>
+<?php else: ?><div class="alert alert-warning">Checkout could not be prepared. Please contact the foundation.</div><?php endif; ?>
+<p class="muted mt-4 mb-0"><i class="fa fa-lock me-1"></i>Payment status is confirmed by the server after provider verification.</p></main></body></html>

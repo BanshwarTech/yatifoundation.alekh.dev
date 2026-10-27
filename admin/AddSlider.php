@@ -1,29 +1,33 @@
 <?php
-session_start();
-if (empty($_SESSION["loginAdmin"])) {
-    header("location:../index.php");
-    exit;
-}
+require_once __DIR__ . '/includes/admin_helpers.php';
+admin_require_auth();
 include_once('../Includes/db.php');
+
+$editId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$isEditing = $editId !== null && $editId !== false && $editId > 0;
+$record = null;
+if ($isEditing) {
+    $stmt = mysqli_prepare($con, 'SELECT sId, title, quots, file FROM slider WHERE sId = ? AND isDel = 1 LIMIT 1');
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, 'i', $editId);
+        mysqli_stmt_execute($stmt);
+        $record = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+        mysqli_stmt_close($stmt);
+    }
+    if (!$record) {
+        header('Location: slidermanagement.php');
+        exit;
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Add Slider - Yati Foundation</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-    <link href="css/styles.css" rel="stylesheet" />
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-</head>
+<?php $adminPageTitle = $isEditing ? 'Edit Slider' : 'Add Slider'; include __DIR__ . '/includes/head.php'; ?>
 
 <body class="sb-nav-fixed">
-    <?php include('../admin/includes/topHeader.php') ?>
+    <?php include('../admin/includes/topheader.php') ?>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
             <?php include('../admin/includes/sidebar.php') ?>
@@ -31,27 +35,33 @@ include_once('../Includes/db.php');
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Add Slider</h1><br>
+                    <div class="admin-page-heading admin-section-heading mt-4"><div><span class="admin-eyebrow">Yati Foundation</span><h1><?php echo $isEditing ? 'Edit Slider' : 'Add Slider'; ?></h1><p><?php echo $isEditing ? 'Update this homepage slide.' : 'Feature a new story on the homepage.'; ?></p></div></div>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
-                            Slider
+                            <?php echo $isEditing ? 'Slider details' : 'Slider'; ?>
                         </div>
                         <div class="card-body">
-                            <form action="../admin/code.php?msg=add-slider" method="post" enctype="multipart/form-data">
+                            <form class="admin-standard-grid" action="../admin/code.php?msg=<?php echo $isEditing ? 'update-slider' : 'add-slider'; ?>" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(admin_csrf_token(), ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php if ($isEditing): ?><input type="hidden" name="id" value="<?php echo (int) $record['sId']; ?>"><?php endif; ?>
                                 <div class="mb-3">
                                     <label class="form-label">Title</label>
-                                    <input type="text" class="form-control" name="title">
+                                    <input type="text" class="form-control" name="title" value="<?php echo $isEditing ? admin_h($record['title']) : ''; ?>" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Quots</label>
-                                    <input type="text" class="form-control" name="quots">
+                                    <label class="form-label">Quote</label>
+                                    <input type="text" class="form-control" name="quots" value="<?php echo $isEditing ? admin_h($record['quots']) : ''; ?>" required>
                                 </div>
+                                <?php if ($isEditing): ?>
+                                    <div class="mb-3"><label class="form-label">Current image</label><div><img class="admin-edit-preview" src="upload/<?php echo rawurlencode($record['file']); ?>" alt="<?php echo admin_h($record['title']); ?>"></div></div>
+                                    <div class="admin-form-hint mb-2">Leave the replacement image empty to keep the current image.</div>
+                                <?php endif; ?>
                                 <div class="mb-3">
-                                    <label class="form-label">Image</label>
-                                    <input type="file" class="form-control" name="file">
+                                    <label class="form-label" for="sliderFile"><?php echo $isEditing ? 'Replace Image (optional)' : 'Image'; ?></label>
+                                    <input type="file" class="form-control" id="sliderFile" name="file" accept="image/png,image/jpeg,image/webp" <?php echo $isEditing ? '' : 'required'; ?>>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <div class="admin-form-actions"><button type="submit" class="btn btn-primary"><?php echo $isEditing ? 'Save changes' : 'Submit'; ?></button><?php if ($isEditing): ?><a class="btn btn-admin-secondary" href="slidermanagement.php">Cancel</a><?php endif; ?></div>
                             </form>
                         </div>
                     </div>
@@ -60,7 +70,7 @@ include_once('../Includes/db.php');
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                        <div class="text-muted">&copy; <?php echo date('Y'); ?> Yati Foundation</div>
                         <div>
                             <a href="#">Privacy Policy</a>
                             &middot;

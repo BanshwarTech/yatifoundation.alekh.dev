@@ -25,7 +25,7 @@ Table of contents
 font & reset css
 --------------------------------------------- 
 */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800");
 
 /* 
 ---------------------------------------------
@@ -140,7 +140,7 @@ hgroup {
 
 html,
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -184,7 +184,7 @@ Global Styles
 */
 html,
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 ::selection {

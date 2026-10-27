@@ -1,42 +1,45 @@
 <?php
+session_start();
+require_once __DIR__ . '/Includes/db.php';
 $pageTitle = 'Contact Us';
+$pageHeroEyebrow = 'Get in touch';
+$pageHeroTitle = "Let's start a";
+$pageHeroHighlight = 'conversation.';
+$pageHeroDescription = 'Have a question, a partnership idea or want to learn more about our work? We would love to hear from you.';
+$pageHeroAsideValue = '24 hours';
+$pageHeroAsideLabel = "Typical reply\ntime";
+$pageHeroAsideIcon = 'fa-paper-plane';
+$pageHeroCurrent = 'Contact Us';
 $pageDesc  = 'Get in touch with Yati Foundation. We would love to hear from you.';
 include 'Includes/head.php';
+include 'Includes/page-hero.php';
 ?>
-
-<section class="page-heading">
-    <div class="container">
-        <h1>Contact Us</h1>
-        <div class="breadcrumb-nav"><a href="index.php">Home</a> &nbsp;/&nbsp; Contact Us</div>
-    </div>
-</section>
 
 <section class="section-pad">
     <div class="container">
         <div class="row g-5">
             <div class="col-lg-5 reveal">
-                <span class="eyebrow">Get In Touch</span>
-                <h2 class="section-title">We'd love to hear from you</h2>
                 <p>Have a question, a partnership idea, or want to learn more about our work? Reach out &mdash; our team
                     will get back to you as soon as we can.</p>
 
                 <div class="contact-info-item">
                     <div class="ci-icon"><i class="fa fa-location-dot"></i></div>
-                    <h6>123 Hope Street, New Delhi<span>India 110001</span></h6>
+                    <h6>Yati Foundation<span>Contact us using the form</span></h6>
                 </div>
                 <div class="contact-info-item">
                     <div class="ci-icon"><i class="fa fa-phone-volume"></i></div>
-                    <h6>+91 96969 69696<span>Mon–Sat, 9am to 6pm</span></h6>
+                    <h6>Volunteer and donation enquiries<span>Our team will follow up</span></h6>
                 </div>
                 <div class="contact-info-item">
                     <div class="ci-icon"><i class="fa fa-envelope"></i></div>
-                    <h6>care@yatifoundation.org<span>We reply within 24 hours</span></h6>
+                    <h6>Send a message<span>Use the contact form</span></h6>
                 </div>
             </div>
 
             <div class="col-lg-7 reveal">
                 <div class="form-card">
                     <form id="contact-form" action="Includes/code.php?msg=add-contact" method="post">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(public_csrf_token(), ENT_QUOTES, 'UTF-8'); ?>"><div class="d-none" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
                         <div class="row">
                             <div class="col-md-6">
                                 <fieldset>

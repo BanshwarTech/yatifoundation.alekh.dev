@@ -14,14 +14,14 @@ $pageDesc  = isset($pageDesc) ? $pageDesc : 'Yati Foundation — empowering comm
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="<?php echo htmlspecialchars($pageDesc); ?>">
     <meta name="theme-color" content="#f35525">
-    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg?v=2">
 
     <title><?php echo htmlspecialchars($pageTitle); ?> | Yati Foundation</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Bootstrap core CSS (local) -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">

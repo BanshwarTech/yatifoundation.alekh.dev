@@ -3,45 +3,76 @@ session_start();
 include_once('Includes/db.php');
 $pageTitle = 'News & Updates';
 $pageDesc  = 'Latest news, stories and updates from Yati Foundation and the communities we serve.';
+$pageHeroEyebrow = 'News from the field';
+$pageHeroTitle = 'Good things are';
+$pageHeroHighlight = 'happening together.';
+$pageHeroDescription = 'Follow our latest stories, milestones and the impact communities are creating together.';
+$pageHeroAsideValue = 'Our stories';
+$pageHeroAsideLabel = "Updates from\nour community";
+$pageHeroAsideIcon = 'fa-book-open';
+$pageHeroCurrent = 'News';
+function news_summary(string $description, int $limit): string
+{
+    $intro = trim($description);
+    if (preg_match('/\R[ \t]*##[ \t]+/u', $intro, $heading, PREG_OFFSET_CAPTURE)) {
+        $intro = substr($intro, 0, $heading[0][1]);
+    } elseif (preg_match('/^[ \t]*##[ \t]+/u', $intro)) {
+        $intro = preg_replace('/^[ \t]*##[ \t]+/u', '', $intro);
+    }
+    $intro = preg_replace('/(^|\R)[ \t]*#{1,6}[ \t]*/u', '$1', $intro);
+    $plain = trim(preg_replace('/\s+/u', ' ', strip_tags($intro)));
+    return mb_strimwidth($plain, 0, $limit, '…');
+}
 include 'Includes/head.php';
+include 'Includes/page-hero.php';
 ?>
 
-<section class="page-heading">
+<section class="section-pad news-page">
     <div class="container">
-        <h1>News &amp; Updates</h1>
-        <div class="breadcrumb-nav"><a href="index.php">Home</a> &nbsp;/&nbsp; News</div>
-    </div>
-</section>
-
-<section class="section-pad">
-    <div class="container">
-        <div class="section-head center reveal">
-            <span class="eyebrow center">Stay Informed</span>
-            <h2 class="section-title">Latest Stories &amp; Updates</h2>
-            <p class="section-lead">Follow our journey, milestones and the impact your support creates on the ground.</p>
-        </div>
-
         <div class="row g-4">
             <?php
             $result = mysqli_query($con, "SELECT * FROM news WHERE isDel='1' ORDER BY nId DESC");
             if ($result && mysqli_num_rows($result) > 0):
-                while ($row = mysqli_fetch_assoc($result)):
-                    $img = 'admin/upload/' . rawurlencode($row['file']);
+                $featured = mysqli_fetch_assoc($result);
+                $featuredUrl = 'newsdetail.php?id=' . (int) $featured['nId'];
+                $featuredImage = 'admin/upload/' . rawurlencode($featured['file']);
             ?>
+                <div class="col-12 reveal">
+                    <article class="news-featured">
+                        <a class="news-featured-thumb" href="<?php echo $featuredUrl; ?>">
+                            <img src="<?php echo $featuredImage; ?>" alt="<?php echo htmlspecialchars($featured['title'], ENT_QUOTES, 'UTF-8'); ?>" fetchpriority="high">
+                            <span class="news-featured-label"><i class="fa fa-star"></i> Latest story</span>
+                        </a>
+                        <div class="news-featured-body">
+                            <span class="news-date"><i class="fa fa-calendar"></i><?php echo htmlspecialchars($featured['addedOn'], ENT_QUOTES, 'UTF-8'); ?></span>
+                            <h2><a href="<?php echo $featuredUrl; ?>"><?php echo htmlspecialchars($featured['title'], ENT_QUOTES, 'UTF-8'); ?></a></h2>
+                            <p><?php echo htmlspecialchars(news_summary((string) $featured['description'], 320), ENT_QUOTES, 'UTF-8'); ?></p>
+                            <a class="btn-brand news-featured-link" href="<?php echo $featuredUrl; ?>">Read full story <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                    </article>
+                </div>
+                <?php if (mysqli_num_rows($result) > 1): ?>
+                    <div class="col-12 news-list-heading"><span class="eyebrow">More from Yati</span><h3>More stories</h3></div>
+                <?php endif; ?>
+                <?php while ($row = mysqli_fetch_assoc($result)):
+                    $img = 'admin/upload/' . rawurlencode($row['file']);
+                    $detailUrl = 'newsdetail.php?id=' . (int) $row['nId'];
+                ?>
                     <div class="col-lg-4 col-md-6 reveal">
                         <article class="news-card">
-                            <a class="news-thumb" href="NewsDetail.php?id=<?php echo (int) $row['nId']; ?>">
-                                <img src="<?php echo $img; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>" loading="lazy">
+                            <a class="news-thumb" href="<?php echo $detailUrl; ?>">
+                                <img src="<?php echo $img; ?>" alt="<?php echo htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8'); ?>" loading="lazy">
                             </a>
                             <div class="news-body">
-                                <span class="category"><i class="fa fa-calendar me-1"></i><?php echo htmlspecialchars($row['addedOn']); ?></span>
-                                <h4><a href="NewsDetail.php?id=<?php echo (int) $row['nId']; ?>"><?php echo htmlspecialchars($row['title']); ?></a></h4>
-                                <p><?php echo nl2br(htmlspecialchars(mb_strimwidth($row['description'], 0, 160, '…'))); ?></p>
-                                <a class="news-more" href="NewsDetail.php?id=<?php echo (int) $row['nId']; ?>">Read More <i class="fa fa-arrow-right"></i></a>
+                                <span class="category"><i class="fa fa-calendar me-1"></i><?php echo htmlspecialchars($row['addedOn'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                <h4><a href="<?php echo $detailUrl; ?>"><?php echo htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8'); ?></a></h4>
+                                <p><?php echo htmlspecialchars(news_summary((string) $row['description'], 160), ENT_QUOTES, 'UTF-8'); ?></p>
+                                <a class="news-more" href="<?php echo $detailUrl; ?>">Read More <i class="fa fa-arrow-right"></i></a>
                             </div>
                         </article>
                     </div>
-            <?php endwhile; else: ?>
+                <?php endwhile; ?>
+            <?php else: ?>
                 <div class="col-12 text-center text-muted">No news articles yet. Please check back soon.</div>
             <?php endif; ?>
         </div>
