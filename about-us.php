@@ -91,7 +91,7 @@ include __DIR__ . '/Includes/page-hero.php';
         <div class="container">
             <div class="row align-items-center g-4">
                 <div class="col-lg-7 reveal"><span class="eyebrow">Trust and transparency</span><h2 class="section-title">Clear information helps build trust</h2><p class="section-lead">We aim to share public reports and verified impact figures here as they become available. Donation form submissions are pledges; contributions are marked received only after payment is verified.</p></div>
-                <div class="col-lg-5 reveal"><div class="about-trust-links"><a href="reports.php"><span><i class="fa fa-file-lines"></i><b>Public reports</b><small>Read published documents</small></span><i class="fa fa-arrow-right"></i></a><a href="contactus.php"><span><i class="fa fa-message"></i><b>Ask a question</b><small>Contact the foundation</small></span><i class="fa fa-arrow-right"></i></a></div></div>
+                <div class="col-lg-5 reveal"><div class="about-trust-links"><a href="reports.php"><span><i class="fa fa-file-lines"></i><b>Public reports</b><small>Read published documents</small></span><i class="fa fa-arrow-right"></i></a><a href="contact-us.php"><span><i class="fa fa-message"></i><b>Ask a question</b><small>Contact the foundation</small></span><i class="fa fa-arrow-right"></i></a></div></div>
             </div>
         </div>
     </section>

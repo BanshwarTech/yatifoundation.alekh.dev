@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/admin_helpers.php';
+require_once __DIR__ . '/../payment/gateways.php';
 admin_require_auth();
 include_once('../Includes/db.php');
 ?>
@@ -32,7 +33,7 @@ include_once('../Includes/db.php');
                                         <th>Name</th>
                                         <th>Mobile Number</th>
                                         <th>Email</th>
-                                        <th>Amount</th>
+                                        <th>Amount (INR / approx. USD)</th>
                                         <th>Purpose of Donation</th>
                                         <th>Address</th>
                                         <th>AddedOn</th>
@@ -45,7 +46,7 @@ include_once('../Includes/db.php');
                                         <th>Name</th>
                                         <th>Mobile Number</th>
                                         <th>Email</th>
-                                        <th>Amount</th>
+                                        <th>Amount (INR / approx. USD)</th>
                                         <th>Purpose of Donation</th>
                                         <th>Address</th>
                                         <th>AddedOn</th>
@@ -78,7 +79,9 @@ include_once('../Includes/db.php');
                                                     <?php echo admin_h($row['email']); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo admin_h($row['amount']); ?>
+                                                    <?php $donationAmount = (float) $row['amount']; ?>
+                                                    <strong>&#8377;<?php echo number_format($donationAmount, 2); ?></strong>
+                                                    <small class="d-block text-muted">&asymp; <?php echo admin_h(payment_usd_estimate($donationAmount)); ?></small>
                                                 </td>
                                                 <td>
                                                     <?php echo nl2br(admin_h($row['purposeofDonation'])); ?>

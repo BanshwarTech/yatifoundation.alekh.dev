@@ -11,8 +11,8 @@ A modern, fully responsive website for **Yati Foundation**, a non-profit organis
 ## Repository structure
 
 - `.gitignore`
-- `aboutus.php`
-- `contactus.php`
+- `about-us.php`
+- `contact-us.php`
 - `donate.php`
 - `gallery.php`
 - `Includes/code.php`

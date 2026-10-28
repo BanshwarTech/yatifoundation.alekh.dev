@@ -125,18 +125,18 @@ switch ($msg) {
     /* -------------------------------------------------------------- CONTACT */
     case 'add-contact':
         if (isset($_POST['btnContact'])) {
-            if (!public_csrf_valid() || !empty($_POST['website'])) flash_redirect('Please refresh the page and try again.', '../contactus.php');
+            if (!public_csrf_valid() || !empty($_POST['website'])) flash_redirect('Please refresh the page and try again.', '../contact-us.php');
             $name    = trim($_POST['name'] ?? '');
             $email   = trim($_POST['email'] ?? '');
             $subject = trim($_POST['subject'] ?? '');
             $message = trim($_POST['message'] ?? '');
-            if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || $subject === '' || $message === '') flash_redirect('Please complete all fields with a valid email.', '../contactus.php');
+            if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || $subject === '' || $message === '') flash_redirect('Please complete all fields with a valid email.', '../contact-us.php');
 
             $stmt = mysqli_prepare($con, "INSERT INTO contact (name, email, subject, message, addedOn, isDel, status) VALUES (?,?,?,?,?,1,'New')");
             $today = date('Y-m-d');
             mysqli_stmt_bind_param($stmt, 'sssss', $name, $email, $subject, $message, $today);
             $ok = mysqli_stmt_execute($stmt);
-            flash_redirect($ok ? 'Thank you for reaching out! We will get back to you soon.' : 'Something went wrong. Please try again.', '../contactus.php');
+            flash_redirect($ok ? 'Thank you for reaching out! We will get back to you soon.' : 'Something went wrong. Please try again.', '../contact-us.php');
         }
         break;
 }

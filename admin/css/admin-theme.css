@@ -104,6 +104,18 @@ body { font-family: var(--bs-body-font-family); color: var(--admin-ink); backgro
 .admin-page-heading h1 { color: var(--admin-ink); font-size: clamp(1.65rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -.04em; margin: .15rem 0 .25rem; }
 .admin-page-heading p { color: var(--admin-muted); margin: 0; }
 .admin-eyebrow { color: var(--admin-brand); font-size: .73rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.payment-gateway-card-header { padding: 0 !important; background: linear-gradient(120deg, #fff, #f8fbff); }
+#layoutSidenav_content .payment-website-settings > .card-body { display: block; min-height: 0; padding: 1.5rem 1.6rem; }
+#layoutSidenav_content .payment-website-settings > .card-body::before { content: none; }
+.payment-website-settings .form-text { margin-top: .45rem; line-height: 1.5; }
+.payment-gateway-card-title { padding: 1rem 1.35rem .65rem; color: var(--admin-ink); font-size: 1rem; }
+.payment-gateway-card-title i { color: var(--admin-primary); }
+.payment-gateway-card-header .nav-tabs { gap: .4rem; padding: 0 1.1rem; border-bottom: 0; }
+.payment-gateway-card-header .nav-tabs .nav-link { display: inline-flex; align-items: center; padding: .7rem 1rem; border: 1px solid transparent; border-bottom: 0; border-radius: 10px 10px 0 0; color: var(--admin-muted); font-size: .9rem; font-weight: 700; }
+.payment-gateway-card-header .nav-tabs .nav-link:hover { color: var(--admin-primary); background: #138a720a; }
+.payment-gateway-card-header .nav-tabs .nav-link.active { border-color: var(--admin-border); color: var(--admin-primary-dark); background: var(--admin-surface); }
+.payment-gateway-status { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.1rem; }
+.payment-gateway-status h2 { margin: 0; color: var(--admin-ink); font-size: 1rem; font-weight: 700; }
 .btn-admin-primary { color: #fff; background: var(--admin-primary); border-color: var(--admin-primary); border-radius: 8px; font-weight: 600; padding: .65rem 1rem; }
 .btn-admin-primary:hover, .btn-admin-primary:focus { color: #fff; background: var(--admin-primary-dark); border-color: var(--admin-primary-dark); }
 .breadcrumb { color: var(--admin-muted); }
@@ -118,12 +130,12 @@ body { font-family: var(--bs-body-font-family); color: var(--admin-ink); backgro
 #layoutSidenav_content .card-body:has(> form) > form { width: 100%; max-width: 780px; }
 #layoutSidenav_content .card-body:has(> form) .mb-3 { margin-bottom: 1.25rem !important; }
 #layoutSidenav_content .card-body:has(> form) .form-label { display: block; margin-bottom: .55rem; color: #34445b; font-size: .88rem; font-weight: 700; }
-#layoutSidenav_content .card-body:has(> form) .form-control { width: 100%; min-height: 46px; padding: .7rem .9rem; border: 1px solid #dce4ee; border-radius: 10px; color: var(--admin-ink); background-color: #fff; box-shadow: 0 1px 2px #172b4d08; transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
+#layoutSidenav_content .card-body:has(> form) .form-control { width: 100%; min-height: 42px; padding: .55rem .8rem; border: 1px solid #dce4ee; border-radius: 10px; color: var(--admin-ink); background-color: #fff; font-size: .92rem; box-shadow: 0 1px 2px #172b4d08; transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
 #layoutSidenav_content .card-body:has(> form) textarea.form-control { min-height: 150px; resize: vertical; }
 #layoutSidenav_content .card-body:has(> form) input[type="file"].form-control { min-height: 48px; padding: .4rem; color: #718096; background: #fbfcfe; }
 #layoutSidenav_content .card-body:has(> form) input[type="file"]::file-selector-button { min-height: 38px; margin: 0 .8rem 0 0; padding: .45rem .9rem; border: 0; border-radius: 7px; color: var(--admin-primary-dark); background: #e8f6f2; font-weight: 700; }
 #layoutSidenav_content .card-body:has(> form) .form-control:focus { border-color: var(--admin-primary); background-color: #fff; box-shadow: 0 0 0 4px #138a721a; }
-#layoutSidenav_content .card-body:has(> form) .btn-primary { min-height: 44px; padding: .65rem 1.25rem; border-color: var(--admin-primary); border-radius: 9px; color: #fff; background: var(--admin-primary); font-weight: 700; box-shadow: 0 5px 14px #138a7226; }
+#layoutSidenav_content .card-body:has(> form) .btn-primary { min-height: 38px; padding: .5rem 1rem; border-color: var(--admin-primary); border-radius: 9px; color: #fff; background: var(--admin-primary); font-size: .9rem; font-weight: 700; box-shadow: 0 5px 14px #138a7226; }
 #layoutSidenav_content .card-body:has(> form) .btn-primary:hover { border-color: var(--admin-primary-dark); background: var(--admin-primary-dark); transform: translateY(-1px); }
 #layoutSidenav_content .admin-edit-preview { display: block; width: min(240px, 100%); max-height: 150px; border: 1px solid var(--admin-border); border-radius: 12px; background: #f8fafc; object-fit: contain; }
 #layoutSidenav_content .admin-form-hint { color: var(--admin-muted); font-size: .78rem; font-weight: 400; }
@@ -223,7 +235,7 @@ body { font-family: var(--bs-body-font-family); color: var(--admin-ink); backgro
 #layoutSidenav_content main form .form-label { display: block; margin-bottom: .5rem; color: #34445b; font-size: .86rem; font-weight: 700; }
 #layoutSidenav_content main form .form-control,
 #layoutSidenav_content main form .form-select {
-  width: 100%; min-height: 46px; padding: .68rem .9rem;
+  width: 100%; min-height: 42px; padding: .55rem .8rem; font-size: .92rem;
   border: 1px solid #dce4ee; border-radius: 10px; color: var(--admin-ink);
   background-color: #fff; box-shadow: 0 1px 2px #172b4d08;
   transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
@@ -231,16 +243,21 @@ body { font-family: var(--bs-body-font-family); color: var(--admin-ink); backgro
 #layoutSidenav_content main form textarea.form-control { min-height: 136px; resize: vertical; }
 #layoutSidenav_content main form .form-control:focus,
 #layoutSidenav_content main form .form-select:focus { border-color: var(--admin-primary); box-shadow: 0 0 0 4px #138a721a; }
+.password-field-wrap { position: relative; width: 100%; }
+#layoutSidenav_content .password-field-wrap > input { padding-right: 3rem !important; }
+.admin-password-toggle { position: absolute; top: 50%; right: .55rem; display: grid; width: 34px; height: 34px; place-items: center; padding: 0; border: 0; border-radius: 8px; color: var(--admin-muted); background: transparent; transform: translateY(-50%); }
+.admin-password-toggle:hover { color: var(--admin-primary); background: #e8f6f2; }
+.admin-password-toggle:focus-visible { outline: 2px solid var(--admin-primary); outline-offset: 2px; }
 #layoutSidenav_content main form input[type="file"].form-control { min-height: 48px; padding: .4rem; color: #718096; background: #fbfcfe; }
 #layoutSidenav_content main form input[type="file"]::file-selector-button { min-height: 38px; margin: 0 .8rem 0 0; padding: .45rem .9rem; border: 0; border-radius: 7px; color: var(--admin-primary-dark); background: #e8f6f2; font-weight: 700; }
 #layoutSidenav_content main form .form-check-input { width: 1rem; height: 1rem; min-height: 1rem; padding: 0; border-color: #cbd5e1; }
 #layoutSidenav_content main form .form-check-input:checked { border-color: var(--admin-primary); background-color: var(--admin-primary); }
 #layoutSidenav_content main form .form-check-label,
 #layoutSidenav_content main form .form-text { color: var(--admin-muted); font-size: .8rem; font-weight: 400; }
-#layoutSidenav_content main form button[type="submit"]:not(.btn-outline-danger):not([aria-label*="Delete"]) { min-height: 42px; border: 1px solid var(--admin-primary); border-radius: 9px; color: #fff; background: var(--admin-primary); font-weight: 700; }
+#layoutSidenav_content main form button[type="submit"]:not(.btn-outline-danger):not([aria-label*="Delete"]) { min-height: 38px; padding: .45rem .9rem; border: 1px solid var(--admin-primary); border-radius: 9px; color: #fff; background: var(--admin-primary); font-size: .88rem; font-weight: 700; }
 #layoutSidenav_content main form button[type="submit"]:not(.btn-outline-danger):not([aria-label*="Delete"]):hover { border-color: var(--admin-primary-dark); color: #fff; background: var(--admin-primary-dark); }
 #layoutSidenav_content main form .admin-form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 1.4rem; }
-#layoutSidenav_content main form .admin-form-actions .btn { min-width: 120px; }
+#layoutSidenav_content main form .admin-form-actions .btn { min-width: 100px; }
 #layoutSidenav_content main form.admin-standard-grid { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
 #layoutSidenav_content main form.admin-standard-grid > .admin-form-actions { margin-top: 0; }
 #layoutSidenav_content main form.admin-standard-grid > .admin-form-actions,
@@ -252,11 +269,27 @@ body { font-family: var(--bs-body-font-family); color: var(--admin-ink); backgro
 #layoutSidenav_content main form.pb-4 .row.g-3 > [class*="col-"] { width: 100%; max-width: none; }
 #layoutSidenav_content main form.d-flex .form-select { width: auto; min-width: 120px; flex: 1 1 auto; }
 
+.program-edit-row { display: grid; grid-template-columns: minmax(150px, .9fr) minmax(220px, 1.3fr) minmax(220px, 1.3fr) auto; align-items: center; gap: 12px; margin: 0; padding: 16px 0; border-top: 1px solid var(--admin-border); }
+.program-edit-row > [class*="col-"] { width: auto; max-width: none; padding: 0; }
+.program-edit-field { min-width: 0; }
+.program-edit-row .form-control { min-height: 42px; padding: .55rem .75rem; font-size: .88rem; }
+.program-edit-actions { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.program-archive-form { display: none !important; }
+
+@media (max-width: 1199.98px) {
+  .program-edit-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .program-edit-actions { grid-column: 1 / -1; justify-content: flex-end; }
+}
+
 @media (max-width: 767.98px) {
   .gallery-upload-row { grid-template-columns: minmax(0, 1fr) 38px; gap: 10px; padding: 13px; }
   .gallery-upload-heading, .gallery-upload-file { grid-column: 1 / -1; }
   .gallery-upload-remove { grid-column: 2; grid-row: 1; justify-self: end; }
   .gallery-upload-footer { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 575.98px) {
+  .program-edit-row { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .program-edit-actions { grid-column: 1; justify-content: flex-start; }
 }
 @media (max-width: 767.98px) {
   .admin-sidebar-brand { padding: 13px 14px; }

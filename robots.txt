@@ -3,5 +3,7 @@ Allow: /
 Disallow: /Includes/
 Disallow: /payment/
 Disallow: /Database/
+Disallow: /admin/
+Disallow: /login.php
 
 Sitemap: https://yatifoundation.alekh.dev/sitemap.xml

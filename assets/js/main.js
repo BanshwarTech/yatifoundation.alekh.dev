@@ -158,9 +158,27 @@
         chip.addEventListener("click", function () {
             chips.forEach(function (c) { c.classList.remove("active"); });
             chip.classList.add("active");
-            if (amountInput) amountInput.value = chip.getAttribute("data-amount");
+            if (amountInput) {
+                amountInput.value = chip.getAttribute("data-amount");
+                amountInput.dispatchEvent(new Event("input", { bubbles: true }));
+            }
         });
     });
+    var currencyHint = document.getElementById("amountCurrencyHint");
+    if (amountInput && currencyHint) {
+        var usdToInr = Number(currencyHint.getAttribute("data-usd-to-inr"));
+        var updateCurrencyHint = function () {
+            var amount = Number(amountInput.value);
+            currencyHint.textContent = amount > 0 && usdToInr > 0
+                ? "Approx. $" + (amount / usdToInr).toFixed(2) + " USD; payment is charged as \u20B9" + amount.toLocaleString("en-IN") + " INR."
+                : "Approximate USD equivalent only; payments are charged in INR (1 USD \u2248 \u20B9" + usdToInr.toFixed(2) + ").";
+        };
+        amountInput.addEventListener("input", function () {
+            chips.forEach(function (chip) { chip.classList.toggle("active", Number(chip.getAttribute("data-amount")) === Number(amountInput.value)); });
+            updateCurrencyHint();
+        });
+        updateCurrencyHint();
+    }
 
     /* ---- Gallery lightbox ---- */
     var lightbox = document.getElementById("lightbox");

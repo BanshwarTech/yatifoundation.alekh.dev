@@ -2,11 +2,11 @@
 /** Modern responsive header / navbar */
 $current = basename($_SERVER['PHP_SELF']);
 $nav = [
-    'aboutus.php'   => 'About Us',
+    'about-us.php'   => 'About Us',
     'programs.php'  => 'Programs',
     'volunteer.php'  => 'Volunteer',
     'news.php'      => 'News',
-    'contactus.php' => 'Contact',
+    'contact-us.php' => 'Contact',
 ];
 ?>
 <header class="site-header" id="siteHeader">

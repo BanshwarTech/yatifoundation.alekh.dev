@@ -2,6 +2,17 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../Includes/env.php';
 
+function payment_usd_display_rate(): float
+{
+    $rate = filter_var(getenv('USD_DISPLAY_RATE'), FILTER_VALIDATE_FLOAT);
+    return $rate !== false && $rate > 0 ? (float) $rate : 95.23;
+}
+
+function payment_usd_estimate(float $inr): string
+{
+    return '$' . number_format($inr / payment_usd_display_rate(), 2, '.', ',');
+}
+
 function payment_gateway_configs(): array
 {
     $cashfreeMode = strtolower((string) (getenv('CASHFREE_ENVIRONMENT') ?: 'sandbox')) === 'production' ? 'production' : 'sandbox';
@@ -44,7 +55,6 @@ function payment_base_url(): string
 
 function payment_http(string $gateway, string $method, string $url, array $payload = []): array
 {
-    if (!function_exists('curl_init')) return ['ok' => false, 'status' => 0, 'data' => null];
     $configs = payment_gateway_configs();
     $config = $configs[$gateway] ?? null;
     if (!$config || !$config['enabled']) return ['ok' => false, 'status' => 0, 'data' => null];
@@ -56,21 +66,50 @@ function payment_http(string $gateway, string $method, string $url, array $paylo
         $headers[] = 'x-client-secret: ' . $config['secret'];
         $headers[] = 'x-api-version: 2025-01-01';
     }
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_CUSTOMREQUEST => strtoupper($method),
-        CURLOPT_HTTPHEADER => $headers,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_CONNECTTIMEOUT => 10,
-        CURLOPT_TIMEOUT => 25,
-        CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_SSL_VERIFYHOST => 2,
-    ]);
-    if ($payload) curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload, JSON_UNESCAPED_SLASHES));
-    $body = curl_exec($ch);
-    $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-    curl_close($ch);
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_CUSTOMREQUEST => strtoupper($method),
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT => 25,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+        ]);
+        if ($payload) curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload, JSON_UNESCAPED_SLASHES));
+        $body = curl_exec($ch);
+        $status = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        curl_close($ch);
+    } else {
+        if (!filter_var((string) ini_get('allow_url_fopen'), FILTER_VALIDATE_BOOLEAN)) {
+            error_log('Payment gateway request unavailable: cURL is missing and allow_url_fopen is disabled.');
+            return ['ok' => false, 'status' => 0, 'data' => null];
+        }
+        $httpOptions = [
+            'method' => strtoupper($method),
+            'header' => implode("\r\n", $headers),
+            'timeout' => 25,
+            'ignore_errors' => true,
+            'max_redirects' => 0,
+        ];
+        if ($payload) $httpOptions['content'] = json_encode($payload, JSON_UNESCAPED_SLASHES);
+        $context = stream_context_create([
+            'http' => $httpOptions,
+            'ssl' => ['verify_peer' => true, 'verify_peer_name' => true, 'allow_self_signed' => false],
+        ]);
+        $body = @file_get_contents($url, false, $context);
+        $status = 0;
+        foreach ($http_response_header ?? [] as $responseHeader) {
+            if (preg_match('/^HTTP\/\S+\s+(\d{3})\b/', $responseHeader, $matches)) $status = (int) $matches[1];
+        }
+        if ($body === false) error_log('Payment gateway HTTPS request failed; check server connectivity and SSL certificates.');
+    }
     $data = is_string($body) ? json_decode($body, true) : null;
+    if ($status < 200 || $status >= 300) {
+        $errorCode = $data['error']['code'] ?? $data['code'] ?? '';
+        error_log('Payment gateway request failed: ' . $gateway . ' HTTP ' . $status . ($errorCode !== '' ? ' (' . preg_replace('/[^A-Za-z0-9_.-]/', '', (string) $errorCode) . ')' : ''));
+    }
     return ['ok' => $status >= 200 && $status < 300 && is_array($data), 'status' => $status, 'data' => is_array($data) ? $data : null];
 }
 

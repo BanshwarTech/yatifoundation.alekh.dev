@@ -23,9 +23,9 @@ include 'Includes/page-hero.php';
             <div class="col-lg-5 reveal">
                 <p>Choose Razorpay or Cashfree for online checkout when enabled. If online payment is unavailable, you can still submit a pledge and the team will follow up.</p>
                 <ul class="feature-list">
-                    <li><i class="fa fa-check"></i><span><b>₹500</b> can provide school supplies for a child for a term.</span></li>
-                    <li><i class="fa fa-check"></i><span><b>₹2,000</b> can fund a community health check-up camp.</span></li>
-                    <li><i class="fa fa-check"></i><span><b>₹5,000</b> can support vocational training for a young adult.</span></li>
+                    <li><i class="fa fa-check"></i><span><b>&#8377;500 (≈ <?php echo payment_usd_estimate(500); ?>)</b> can provide school supplies for a child for a term.</span></li>
+                    <li><i class="fa fa-check"></i><span><b>&#8377;2,000 (≈ <?php echo payment_usd_estimate(2000); ?>)</b> can fund a community health check-up camp.</span></li>
+                    <li><i class="fa fa-check"></i><span><b>&#8377;5,000 (≈ <?php echo payment_usd_estimate(5000); ?>)</b> can support vocational training for a young adult.</span></li>
                 </ul>
             </div>
             <div class="col-lg-7 reveal">
@@ -53,23 +53,28 @@ include 'Includes/page-hero.php';
                             </div>
                             <div class="col-12">
                                 <fieldset>
-                                    <label>Choose an amount (₹)</label>
+                                    <label>Choose an amount (&#8377; / $)</label>
                                     <div class="amount-chips">
-                                        <span class="amount-chip" data-amount="500">₹500</span>
-                                        <span class="amount-chip" data-amount="1000">₹1,000</span>
-                                        <span class="amount-chip" data-amount="2000">₹2,000</span>
-                                        <span class="amount-chip" data-amount="5000">₹5,000</span>
+                                        <?php foreach ([500, 1000, 2000, 5000] as $suggestedAmount): ?>
+                                        <span class="amount-chip" data-amount="<?php echo $suggestedAmount; ?>"><span>&#8377;<?php echo number_format($suggestedAmount); ?></span><small>≈ <?php echo payment_usd_estimate($suggestedAmount); ?></small></span>
+                                        <?php endforeach; ?>
                                     </div>
                                     <input type="number" name="amount" id="amount" min="1" placeholder="Or enter a custom amount" required>
+                                    <small id="amountCurrencyHint" class="form-text" data-usd-to-inr="<?php echo htmlspecialchars((string) payment_usd_display_rate(), ENT_QUOTES, 'UTF-8'); ?>">Approximate USD equivalent only; payments are charged in INR.</small>
                                 </fieldset>
                             </div>
                             <?php if ($availablePaymentGateways): ?>
                             <div class="col-12">
                                 <fieldset>
-                                    <label for="payment_gateway">Payment method</label>
-                                    <select name="payment_gateway" id="payment_gateway" required>
-                                        <?php foreach ($availablePaymentGateways as $gatewayKey => $gateway): ?><option value="<?php echo htmlspecialchars($gatewayKey, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($gateway['label'], ENT_QUOTES, 'UTF-8'); ?> secure checkout</option><?php endforeach; ?>
-                                    </select>
+                                    <label>Payment method</label>
+                                    <div class="payment-method-options" role="radiogroup" aria-label="Payment method">
+                                        <?php $gatewayIndex = 0; foreach ($availablePaymentGateways as $gatewayKey => $gateway): ?>
+                                        <label class="payment-method-choice">
+                                            <input type="radio" name="payment_gateway" value="<?php echo htmlspecialchars($gatewayKey, ENT_QUOTES, 'UTF-8'); ?>" required <?php echo $gatewayIndex === 0 ? 'checked' : ''; ?>>
+                                            <span><?php echo htmlspecialchars($gateway['label'], ENT_QUOTES, 'UTF-8'); ?> secure checkout</span>
+                                        </label>
+                                        <?php $gatewayIndex++; endforeach; ?>
+                                    </div>
                                     <small class="form-text">Payment is confirmed after secure server-side verification.</small>
                                 </fieldset>
                             </div>

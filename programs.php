@@ -37,7 +37,7 @@ $items = mysqli_query($con, "SELECT title, summary, description, icon FROM progr
                             <h3><?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
                             <p class="program-card-summary"><?php echo nl2br(htmlspecialchars($item['summary'], ENT_QUOTES, 'UTF-8')); ?></p>
                             <?php if (trim($item['description']) !== ''): ?><div class="program-card-description"><?php echo nl2br(htmlspecialchars($item['description'], ENT_QUOTES, 'UTF-8')); ?></div><?php endif; ?>
-                            <a href="contactus.php" class="text-link">Ask about this area <i class="fa fa-arrow-right"></i></a>
+                            <a href="contact-us.php" class="text-link">Ask about this area <i class="fa fa-arrow-right"></i></a>
                         </article>
                     </div>
                 <?php endwhile; else: ?>
@@ -65,7 +65,7 @@ $items = mysqli_query($con, "SELECT title, summary, description, icon FROM progr
             <div class="row g-4">
                 <div class="col-lg-4 reveal"><article class="value-card h-100"><div class="v-icon"><i class="fa fa-hands-helping"></i></div><h3 class="h4">Volunteer</h3><p>Tell us about your experience and the kind of support you would like to offer.</p><a href="volunteer.php" class="text-link">Apply to volunteer <i class="fa fa-arrow-right"></i></a></article></div>
                 <div class="col-lg-4 reveal"><article class="value-card h-100"><div class="v-icon"><i class="fa fa-heart"></i></div><h3 class="h4">Support a programme</h3><p>Submit a donation pledge and the foundation team can follow up with next steps.</p><a href="donate.php" class="text-link">Make a pledge <i class="fa fa-arrow-right"></i></a></article></div>
-                <div class="col-lg-4 reveal"><article class="value-card h-100"><div class="v-icon"><i class="fa fa-message"></i></div><h3 class="h4">Ask a question</h3><p>Contact us to ask about current activities, participation or partnerships.</p><a href="contactus.php" class="text-link">Contact us <i class="fa fa-arrow-right"></i></a></article></div>
+                <div class="col-lg-4 reveal"><article class="value-card h-100"><div class="v-icon"><i class="fa fa-message"></i></div><h3 class="h4">Ask a question</h3><p>Contact us to ask about current activities, participation or partnerships.</p><a href="contact-us.php" class="text-link">Contact us <i class="fa fa-arrow-right"></i></a></article></div>
             </div>
         </div>
     </section>
@@ -74,7 +74,7 @@ $items = mysqli_query($con, "SELECT title, summary, description, icon FROM progr
         <div class="container">
             <div class="row align-items-center g-4">
                 <div class="col-lg-7 reveal"><span class="eyebrow">Transparency</span><h2 class="section-title">Follow the work with clear information</h2><p class="section-lead">We will share public reports and impact figures here when the foundation has reviewed and confirmed them. We do not publish unverified totals.</p></div>
-                <div class="col-lg-5 reveal"><div class="about-trust-links"><a href="reports.php"><span><i class="fa fa-file-lines"></i><b>Reports</b><small>Read public documents</small></span><i class="fa fa-arrow-right"></i></a><a href="aboutus.php"><span><i class="fa fa-circle-info"></i><b>About the foundation</b><small>Our mission and approach</small></span><i class="fa fa-arrow-right"></i></a></div></div>
+                <div class="col-lg-5 reveal"><div class="about-trust-links"><a href="reports.php"><span><i class="fa fa-file-lines"></i><b>Reports</b><small>Read public documents</small></span><i class="fa fa-arrow-right"></i></a><a href="about-us.php"><span><i class="fa fa-circle-info"></i><b>About the foundation</b><small>Our mission and approach</small></span><i class="fa fa-arrow-right"></i></a></div></div>
             </div>
         </div>
     </section>
@@ -90,6 +90,6 @@ $items = mysqli_query($con, "SELECT title, summary, description, icon FROM progr
         </div>
     </section>
 
-    <section class="section-pad bg-soft"><div class="container"><div class="cta-band reveal"><h2>Interested in a program?</h2><p>Get in touch to ask about current activities and ways to participate.</p><a href="contactus.php" class="btn-light-pill"><i class="fa fa-paper-plane me-2"></i>Contact the foundation</a></div></div></section>
+    <section class="section-pad bg-soft"><div class="container"><div class="cta-band reveal"><h2>Interested in a program?</h2><p>Get in touch to ask about current activities and ways to participate.</p><a href="contact-us.php" class="btn-light-pill"><i class="fa fa-paper-plane me-2"></i>Contact the foundation</a></div></div></section>
 </main>
 <?php include __DIR__ . '/Includes/footer.php'; ?>

@@ -29,8 +29,8 @@
                 <ul class="footer-links">
                     <li><a href="donate.php">Donate</a></li>
                     <li><a href="volunteer.php">Volunteer</a></li>
-                    <li><a href="contactus.php">Contact Us</a></li>
-                    <li><a href="login.php"><i class="fa fa-lock me-1"></i>Admin Login</a></li>
+                    <li><a href="contact-us.php">Contact Us</a></li>
+                    <li><a href="login.php">Admin Login</a></li>
                 </ul>
             </div>
             <div class="col-lg-4 col-md-6">
@@ -43,7 +43,7 @@
         <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
             <span>&copy; <?php echo date('Y'); ?> Yati Foundation. All rights reserved.</span>
             <div class="footer-bottom-links">
-                <a href="sitemap.xml"><i class="fa fa-sitemap" aria-hidden="true"></i> Sitemap</a>
+                <a href="sitemap.xml">Sitemap</a>
                 <span>Made with <i class="fa fa-heart" aria-hidden="true"></i> for a better world.</span>
             </div>
         </div>
@@ -62,6 +62,7 @@ render_app_toast();
 <!-- Scripts -->
 <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="assets/js/custom-select.js?v=<?php echo @filemtime(__DIR__ . '/../assets/js/custom-select.js'); ?>"></script>
 <script src="assets/js/toast.js"></script>
 </body>
 

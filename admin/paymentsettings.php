@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Includes/env.php';
 
 $envPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env';
 $managed = [
-    'SITE_BASE_URL', 'RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET', 'RAZORPAY_WEBHOOK_SECRET',
+    'SITE_BASE_URL', 'USD_DISPLAY_RATE', 'RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET', 'RAZORPAY_WEBHOOK_SECRET',
     'CASHFREE_APP_ID', 'CASHFREE_SECRET_KEY', 'CASHFREE_WEBHOOK_SECRET', 'CASHFREE_ENVIRONMENT',
 ];
 $notice = $_SESSION['app_toast'] ?? null;
@@ -25,6 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $baseUrl = $values['SITE_BASE_URL'];
     if ($baseUrl !== '' && (!filter_var($baseUrl, FILTER_VALIDATE_URL) || !in_array(strtolower((string) parse_url($baseUrl, PHP_URL_SCHEME)), ['http', 'https'], true))) {
         $message = 'Enter a valid website URL starting with http:// or https://.';
+        $type = 'warning';
+    } elseif (!is_numeric($values['USD_DISPLAY_RATE']) || (float) $values['USD_DISPLAY_RATE'] <= 0 || (float) $values['USD_DISPLAY_RATE'] > 10000) {
+        $message = 'Enter a valid USD to INR display rate greater than zero.';
         $type = 'warning';
     } elseif (!in_array($values['CASHFREE_ENVIRONMENT'], ['sandbox', 'production'], true)) {
         $message = 'Choose Sandbox or Production for Cashfree.';
@@ -75,18 +78,59 @@ $csrf = admin_csrf_token();
     <?php if (!is_file($envPath) || !is_writable($envPath)) : ?><div class="alert alert-warning">The project root .env file must be writable by PHP to save settings. Keep it outside public access.</div><?php endif; ?>
     <form method="post" class="pb-4">
         <input type="hidden" name="csrf_token" value="<?php echo admin_h($csrf); ?>">
-        <section class="card mb-4"><div class="card-header"><i class="fas fa-globe me-2"></i><strong>Website</strong></div><div class="card-body">
-            <label for="siteBaseUrl" class="form-label">Website base URL</label>
-            <input id="siteBaseUrl" class="form-control" type="url" name="SITE_BASE_URL" value="" placeholder="<?php echo admin_h((string) (getenv('SITE_BASE_URL') ?: 'https://your-domain.com')); ?>">
-            <div class="form-text">Leave blank to keep the current URL. Used for payment return and webhook links.</div>
+        <section class="card mb-4 payment-website-settings"><div class="card-header"><i class="fas fa-globe me-2"></i><strong>Website</strong></div><div class="card-body">
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-7">
+                    <label for="siteBaseUrl" class="form-label">Website base URL</label>
+                    <input id="siteBaseUrl" class="form-control" type="url" name="SITE_BASE_URL" value="<?php echo admin_h((string) (getenv('SITE_BASE_URL') ?: '')); ?>" placeholder="<?php echo admin_h((string) (getenv('SITE_BASE_URL') ?: 'https://your-domain.com')); ?>">
+                    <div class="form-text">Leave blank to keep the current URL. Used for payment return and webhook links.</div>
+                </div>
+                <div class="col-lg-5">
+                    <label for="usdDisplayRate" class="form-label">Approximate INR per USD</label>
+                    <input id="usdDisplayRate" class="form-control" type="number" name="USD_DISPLAY_RATE" min="0.01" step="0.01" value="<?php echo admin_h((string) (getenv('USD_DISPLAY_RATE') ?: '95.23')); ?>" required>
+                    <div class="form-text">Display estimate only. Donations are charged in INR. Update the rate periodically.</div>
+                </div>
+            </div>
         </div></section>
-        <section class="card mb-4"><div class="card-header d-flex justify-content-between align-items-center"><span><i class="fas fa-credit-card me-2"></i><strong>Razorpay</strong></span><span class="badge <?php echo $configured('RAZORPAY_KEY_ID') && $configured('RAZORPAY_KEY_SECRET') ? 'bg-success' : 'bg-secondary'; ?>"><?php echo $configured('RAZORPAY_KEY_ID') && $configured('RAZORPAY_KEY_SECRET') ? 'Configured' : 'Not configured'; ?></span></div><div class="card-body"><div class="row g-3">
-            <?php foreach (['RAZORPAY_KEY_ID' => 'Key ID', 'RAZORPAY_KEY_SECRET' => 'Key secret', 'RAZORPAY_WEBHOOK_SECRET' => 'Webhook secret'] as $key => $label) : ?><div class="col-md-6"><label class="form-label" for="f-<?php echo admin_h($key); ?>"><?php echo admin_h($label); ?></label><input class="form-control" id="f-<?php echo admin_h($key); ?>" name="<?php echo admin_h($key); ?>" type="password" autocomplete="new-password" placeholder="<?php echo $configured($key) ? 'Saved — leave blank to keep' : 'Not set'; ?>"><label class="form-check mt-2"><input class="form-check-input" type="checkbox" name="clear[<?php echo admin_h($key); ?>]" value="1"><span class="form-check-label">Clear saved value</span></label></div><?php endforeach; ?>
-        </div></div></section>
-        <section class="card mb-4"><div class="card-header d-flex justify-content-between align-items-center"><span><i class="fas fa-building-columns me-2"></i><strong>Cashfree</strong></span><span class="badge <?php echo $configured('CASHFREE_APP_ID') && $configured('CASHFREE_SECRET_KEY') ? 'bg-success' : 'bg-secondary'; ?>"><?php echo $configured('CASHFREE_APP_ID') && $configured('CASHFREE_SECRET_KEY') ? 'Configured' : 'Not configured'; ?></span></div><div class="card-body"><div class="row g-3">
-            <div class="col-md-6"><label class="form-label" for="cashfreeMode">Environment</label><select id="cashfreeMode" class="form-select" name="CASHFREE_ENVIRONMENT"><option value="sandbox" <?php echo strtolower((string) (getenv('CASHFREE_ENVIRONMENT') ?: 'sandbox')) === 'sandbox' ? 'selected' : ''; ?>>Sandbox</option><option value="production" <?php echo strtolower((string) getenv('CASHFREE_ENVIRONMENT')) === 'production' ? 'selected' : ''; ?>>Production</option></select></div>
-            <?php foreach (['CASHFREE_APP_ID' => 'App ID', 'CASHFREE_SECRET_KEY' => 'Secret key', 'CASHFREE_WEBHOOK_SECRET' => 'Webhook secret'] as $key => $label) : ?><div class="col-md-6"><label class="form-label" for="f-<?php echo admin_h($key); ?>"><?php echo admin_h($label); ?></label><input class="form-control" id="f-<?php echo admin_h($key); ?>" name="<?php echo admin_h($key); ?>" type="password" autocomplete="new-password" placeholder="<?php echo $configured($key) ? 'Saved — leave blank to keep' : 'Not set'; ?>"><label class="form-check mt-2"><input class="form-check-input" type="checkbox" name="clear[<?php echo admin_h($key); ?>]" value="1"><span class="form-check-label">Clear saved value</span></label></div><?php endforeach; ?>
-        </div><p class="form-text mt-3 mb-0">Production mode uses live Cashfree endpoints. Confirm the merchant credentials and webhook configuration before switching.</p></div></section>
+        <section class="card mb-4 payment-gateway-card">
+            <div class="card-header payment-gateway-card-header">
+                <div class="payment-gateway-card-title"><i class="fas fa-credit-card me-2" aria-hidden="true"></i><strong>Payment gateways</strong></div>
+                <ul class="nav nav-tabs" id="paymentGatewayTabs" role="tablist">
+                    <li class="nav-item" role="presentation"><button class="nav-link active" id="razorpay-tab" data-bs-toggle="tab" data-bs-target="#razorpay-panel" type="button" role="tab" aria-controls="razorpay-panel" aria-selected="true"><i class="fas fa-credit-card me-2" aria-hidden="true"></i>Razorpay</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" id="cashfree-tab" data-bs-toggle="tab" data-bs-target="#cashfree-panel" type="button" role="tab" aria-controls="cashfree-panel" aria-selected="false"><i class="fas fa-building-columns me-2" aria-hidden="true"></i>Cashfree</button></li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="paymentGatewayTabContent">
+                    <div class="tab-pane fade show active" id="razorpay-panel" role="tabpanel" aria-labelledby="razorpay-tab" tabindex="0">
+                        <div class="payment-gateway-status"><h2>Razorpay</h2><span class="badge <?php echo $configured('RAZORPAY_KEY_ID') && $configured('RAZORPAY_KEY_SECRET') ? 'bg-success' : 'bg-secondary'; ?>"><?php echo $configured('RAZORPAY_KEY_ID') && $configured('RAZORPAY_KEY_SECRET') ? 'Configured' : 'Not configured'; ?></span></div>
+                        <div class="row g-3">
+                            <?php foreach (['RAZORPAY_KEY_ID' => 'Key ID', 'RAZORPAY_KEY_SECRET' => 'Key secret', 'RAZORPAY_WEBHOOK_SECRET' => 'Webhook secret'] as $key => $label) : $isSecret = strpos($key, 'SECRET') !== false; ?>
+                            <div class="col-md-6">
+                                <label class="form-label" for="f-<?php echo admin_h($key); ?>"><?php echo admin_h($label); ?></label>
+                                <input class="form-control" id="f-<?php echo admin_h($key); ?>" name="<?php echo admin_h($key); ?>" type="<?php echo $isSecret ? 'password' : 'text'; ?>" autocomplete="<?php echo $isSecret ? 'new-password' : 'off'; ?>" value="<?php echo admin_h((string) (getenv($key) ?: '')); ?>" placeholder="<?php echo $configured($key) ? '' : 'Not set'; ?>">
+                                <label class="form-check mt-2"><input class="form-check-input" type="checkbox" name="clear[<?php echo admin_h($key); ?>]" value="1"><span class="form-check-label">Clear saved value</span></label>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="cashfree-panel" role="tabpanel" aria-labelledby="cashfree-tab" tabindex="0">
+                        <div class="payment-gateway-status"><h2>Cashfree</h2><span class="badge <?php echo $configured('CASHFREE_APP_ID') && $configured('CASHFREE_SECRET_KEY') ? 'bg-success' : 'bg-secondary'; ?>"><?php echo $configured('CASHFREE_APP_ID') && $configured('CASHFREE_SECRET_KEY') ? 'Configured' : 'Not configured'; ?></span></div>
+                        <div class="row g-3">
+                            <div class="col-md-6"><label class="form-label" for="cashfreeMode">Environment</label><select id="cashfreeMode" class="form-select" name="CASHFREE_ENVIRONMENT"><option value="sandbox" <?php echo strtolower((string) (getenv('CASHFREE_ENVIRONMENT') ?: 'sandbox')) === 'sandbox' ? 'selected' : ''; ?>>Sandbox</option><option value="production" <?php echo strtolower((string) getenv('CASHFREE_ENVIRONMENT')) === 'production' ? 'selected' : ''; ?>>Production</option></select></div>
+                            <?php foreach (['CASHFREE_APP_ID' => 'App ID', 'CASHFREE_SECRET_KEY' => 'Secret key', 'CASHFREE_WEBHOOK_SECRET' => 'Webhook secret'] as $key => $label) : $isSecret = strpos($key, 'SECRET') !== false; ?>
+                            <div class="col-md-6">
+                                <label class="form-label" for="f-<?php echo admin_h($key); ?>"><?php echo admin_h($label); ?></label>
+                                <input class="form-control" id="f-<?php echo admin_h($key); ?>" name="<?php echo admin_h($key); ?>" type="<?php echo $isSecret ? 'password' : 'text'; ?>" autocomplete="<?php echo $isSecret ? 'new-password' : 'off'; ?>" value="<?php echo admin_h((string) (getenv($key) ?: '')); ?>" placeholder="<?php echo $configured($key) ? '' : 'Not set'; ?>">
+                                <label class="form-check mt-2"><input class="form-check-input" type="checkbox" name="clear[<?php echo admin_h($key); ?>]" value="1"><span class="form-check-label">Clear saved value</span></label>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <p class="form-text mt-3 mb-0">Production mode uses live Cashfree endpoints. Confirm the merchant credentials and webhook configuration before switching.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
         <button class="btn btn-admin-primary" type="submit"><i class="fas fa-floppy-disk me-2"></i>Save payment settings</button>
     </form>
 </div></main><footer class="py-4 bg-light mt-auto"><div class="container-fluid px-4"><div class="small text-muted">&copy; <?php echo date('Y'); ?> Yati Foundation</div></div></footer></div></div>

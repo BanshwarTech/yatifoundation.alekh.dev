@@ -79,6 +79,13 @@ $pageHeroCurrent = 'Story';
 $pageHeroParentLabel = 'News';
 $pageHeroParentHref = 'news.php';
 $pageDesc = mb_strimwidth(strip_tags($article['description']), 0, 150, '…');
+$seoTitle = $pageTitle . ' | Yati Foundation';
+$seoDescription = $pageDesc;
+$seoImage = 'admin/upload/' . rawurlencode((string) $article['file']);
+$articleDate = DateTimeImmutable::createFromFormat('!Y-m-d', (string) $article['addedOn']);
+if ($articleDate instanceof DateTimeImmutable) {
+    $seoDatePublished = $articleDate->format('c');
+}
 include 'Includes/head.php';
 include 'Includes/page-hero.php';
 ?>

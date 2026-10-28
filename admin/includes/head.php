@@ -13,7 +13,9 @@ $adminPageTitle = isset($adminPageTitle) && trim((string) $adminPageTitle) !== '
     <link rel="icon" type="image/svg+xml" href="../assets/images/favicon.svg?v=2">
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
-    <link href="css/admin-theme.css" rel="stylesheet">
+    <link href="css/admin-theme.css?v=<?php echo @filemtime(__DIR__ . '/../css/admin-theme.css'); ?>" rel="stylesheet">
+    <link href="../assets/css/custom-select.css?v=<?php echo @filemtime(__DIR__ . '/../../assets/css/custom-select.css'); ?>" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="../assets/js/custom-select.js?v=<?php echo @filemtime(__DIR__ . '/../../assets/js/custom-select.js'); ?>" defer></script>
 </head>

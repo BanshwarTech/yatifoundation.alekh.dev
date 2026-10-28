@@ -27,11 +27,8 @@ $adminNavLink = static function (string $href, string $icon, string $label) use 
             <?php echo $adminNavLink('paymentsettings.php', 'fas fa-credit-card', 'Payment settings'); ?>
 
             <div class="sb-sidenav-menu-heading">WEBSITE CONTENT</div>
-            <?php echo $adminNavLink('addnews.php', 'fas fa-pen-to-square', 'Add news'); ?>
             <?php echo $adminNavLink('newsmanagement.php', 'fas fa-newspaper', 'News library'); ?>
-            <?php echo $adminNavLink('addgallery.php', 'fas fa-image', 'Add gallery image'); ?>
             <?php echo $adminNavLink('gallerymanagement.php', 'fas fa-images', 'Gallery'); ?>
-            <?php echo $adminNavLink('addslider.php', 'fas fa-panorama', 'Add homepage slider'); ?>
             <?php echo $adminNavLink('slidermanagement.php', 'fas fa-photo-film', 'Homepage sliders'); ?>
 
             <div class="sb-sidenav-menu-heading">ACCOUNT</div>

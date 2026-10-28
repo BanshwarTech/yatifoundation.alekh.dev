@@ -18,7 +18,7 @@ include_once('../Includes/db.php');
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <div class="admin-page-heading admin-section-heading mt-4"><div><span class="admin-eyebrow">Yati Foundation</span><h1>Gallery Management</h1><p>Organize photos shown on your website.</p></div></div>
+                    <div class="admin-page-heading admin-section-heading mt-4"><div><span class="admin-eyebrow">Yati Foundation</span><h1>Gallery Management</h1><p>Organize photos shown on your website.</p></div><a class="btn btn-admin-primary" href="addgallery.php"><i class="fas fa-plus me-2" aria-hidden="true"></i>Add Image</a></div>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
