@@ -178,9 +178,9 @@ include 'Includes/head.php';
                     $storyUrl = 'newsdetail.php?id=' . (int) $story['nId'];
                     $storyImage = 'admin/upload/' . rawurlencode((string) $story['file']);
             ?>
-                <div class="col-lg-4 col-md-6 reveal"><article class="home-story-card">
-                    <a class="home-story-image" href="<?php echo $storyUrl; ?>"><img src="<?php echo htmlspecialchars($storyImage, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($story['title'], ENT_QUOTES, 'UTF-8'); ?>" loading="lazy"></a>
-                    <div class="home-story-content"><span class="home-story-date"><i class="fa fa-calendar-days" aria-hidden="true"></i><?php echo htmlspecialchars($story['addedOn'], ENT_QUOTES, 'UTF-8'); ?></span><h3><a href="<?php echo $storyUrl; ?>"><?php echo htmlspecialchars($story['title'], ENT_QUOTES, 'UTF-8'); ?></a></h3><p><?php echo htmlspecialchars($storyExcerpt, ENT_QUOTES, 'UTF-8'); ?></p><a class="news-more" href="<?php echo $storyUrl; ?>">Read story <i class="fa fa-arrow-right"></i></a></div>
+                <div class="col-lg-4 col-md-6 reveal"><article class="news-card">
+                    <a class="news-thumb" href="<?php echo $storyUrl; ?>"><img src="<?php echo htmlspecialchars($storyImage, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($story['title'], ENT_QUOTES, 'UTF-8'); ?>" loading="lazy"></a>
+                    <div class="news-body"><span class="category"><i class="fa fa-calendar me-1" aria-hidden="true"></i><?php echo htmlspecialchars($story['addedOn'], ENT_QUOTES, 'UTF-8'); ?></span><h4><a href="<?php echo $storyUrl; ?>"><?php echo htmlspecialchars($story['title'], ENT_QUOTES, 'UTF-8'); ?></a></h4><p><?php echo htmlspecialchars($storyExcerpt, ENT_QUOTES, 'UTF-8'); ?></p><a class="news-more" href="<?php echo $storyUrl; ?>">Read More <i class="fa fa-arrow-right"></i></a></div>
                 </article></div>
             <?php endwhile; else: ?>
                 <div class="col-12"><div class="home-empty-note">New community stories will be shared here soon.</div></div>
