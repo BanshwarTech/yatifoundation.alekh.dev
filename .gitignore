@@ -133,3 +133,9 @@ dist
 .pnp.*
 # Local database configuration
 db.php
+
+# Runtime error logs
+error_log
+
+# Apache per-directory configuration
+.htaccess
