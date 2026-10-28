@@ -1,0 +1,64 @@
+<?php
+require_once __DIR__ . '/includes/admin_helpers.php';
+admin_require_auth();
+require_once __DIR__ . '/../Includes/db.php';
+$csrf = admin_csrf_token();
+$uploadDir = __DIR__ . '/reports';
+$notice = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    admin_require_post();
+    $action = $_POST['action'] ?? '';
+    if ($action === 'save_program') {
+        $id = (int) ($_POST['id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+        $summary = trim($_POST['summary'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $icon = trim($_POST['icon'] ?? 'fa-heart');
+        $order = (int) ($_POST['sortOrder'] ?? 0);
+        $published = isset($_POST['isPublished']) ? 1 : 0;
+        $slug = strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $title), '-'));
+        if ($title === '' || $summary === '' || $slug === '') $notice = 'Program title and summary are required.';
+        elseif ($id > 0) {
+            $stmt = mysqli_prepare($con, 'UPDATE programs SET title=?, slug=?, summary=?, description=?, icon=?, sortOrder=?, isPublished=? WHERE programId=? AND isDel=1');
+            mysqli_stmt_bind_param($stmt, 'sssssiii', $title, $slug, $summary, $description, $icon, $order, $published, $id);
+            $notice = mysqli_stmt_execute($stmt) ? 'Program saved.' : 'Could not save program. Check that its title is unique.';
+        } else {
+            $today = date('Y-m-d');
+            $stmt = mysqli_prepare($con, 'INSERT INTO programs (title,slug,summary,description,icon,sortOrder,isPublished,isDel,addedOn) VALUES (?,?,?,?,?,?,?,1,?)');
+            mysqli_stmt_bind_param($stmt, 'sssssiis', $title, $slug, $summary, $description, $icon, $order, $published, $today);
+            $notice = mysqli_stmt_execute($stmt) ? 'Program added.' : 'Could not add program. Check that its title is unique.';
+        }
+    } elseif ($action === 'save_metric') {
+        $id = (int) ($_POST['id'] ?? 0); $label = trim($_POST['label'] ?? ''); $value = max(0, (int) ($_POST['metricValue'] ?? 0));
+        $suffix = trim($_POST['suffix'] ?? ''); $icon = trim($_POST['icon'] ?? 'fa-chart-line'); $order = (int) ($_POST['sortOrder'] ?? 0); $published = isset($_POST['isPublished']) ? 1 : 0; $today = date('Y-m-d');
+        if ($label === '') $notice = 'Metric label is required.';
+        elseif ($id > 0) { $stmt = mysqli_prepare($con, 'UPDATE impact_metrics SET label=?,metricValue=?,suffix=?,icon=?,sortOrder=?,isPublished=?,updatedOn=? WHERE metricId=? AND isDel=1'); mysqli_stmt_bind_param($stmt, 'sissiisi', $label, $value, $suffix, $icon, $order, $published, $today, $id); }
+        else { $stmt = mysqli_prepare($con, 'INSERT INTO impact_metrics (label,metricValue,suffix,icon,sortOrder,isPublished,isDel,updatedOn) VALUES (?,?,?,?,?,?,1,?)'); mysqli_stmt_bind_param($stmt, 'sissiis', $label, $value, $suffix, $icon, $order, $published, $today); }
+        if ($label !== '') $notice = mysqli_stmt_execute($stmt) ? 'Impact metric saved.' : 'Could not save metric.';
+    } elseif ($action === 'add_report') {
+        $title = trim($_POST['title'] ?? ''); $description = trim($_POST['description'] ?? ''); $category = trim($_POST['category'] ?? 'Annual report'); $year = (int) ($_POST['reportYear'] ?? date('Y')); $file = $_FILES['file'] ?? [];
+        $mime = '';
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK && ($file['size'] ?? 0) <= 10 * 1024 * 1024) { $f = finfo_open(FILEINFO_MIME_TYPE); $mime = finfo_file($f, $file['tmp_name']); finfo_close($f); }
+        if ($title === '' || $year < 2000 || $year > ((int) date('Y') + 1) || $mime !== 'application/pdf') $notice = 'Enter a title and valid year, then upload a PDF (max 10 MB).';
+        else {
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+            $filename = bin2hex(random_bytes(16)) . '.pdf';
+            if (!move_uploaded_file($file['tmp_name'], $uploadDir . DIRECTORY_SEPARATOR . $filename)) $notice = 'Could not store report file.';
+            else { $today = date('Y-m-d'); $stmt = mysqli_prepare($con, 'INSERT INTO reports (title,description,category,reportYear,fileName,isPublished,isDel,addedOn) VALUES (?,?,?,?,?,1,1,?)'); mysqli_stmt_bind_param($stmt, 'sssiss', $title, $description, $category, $year, $filename, $today); if (!mysqli_stmt_execute($stmt)) { @unlink($uploadDir . DIRECTORY_SEPARATOR . $filename); $notice = 'Could not add report.'; } else $notice = 'Report published.'; }
+        }
+    } elseif (in_array($action, ['delete_program','delete_metric','delete_report'], true)) {
+        $map = ['delete_program'=>['programs','programId'], 'delete_metric'=>['impact_metrics','metricId'], 'delete_report'=>['reports','reportId']]; [$table,$key] = $map[$action]; $id=(int)($_POST['id']??0); $stmt=mysqli_prepare($con,"UPDATE `$table` SET isDel=0 WHERE `$key`=?"); mysqli_stmt_bind_param($stmt,'i',$id); $notice=mysqli_stmt_execute($stmt)?'Item archived.':'Could not archive item.';
+    }
+}
+$programs = mysqli_query($con, 'SELECT * FROM programs WHERE isDel=1 ORDER BY sortOrder,programId');
+$metrics = mysqli_query($con, 'SELECT * FROM impact_metrics WHERE isDel=1 ORDER BY sortOrder,metricId');
+$reports = mysqli_query($con, 'SELECT * FROM reports WHERE isDel=1 ORDER BY reportYear DESC,reportId DESC');
+?>
+<!doctype html><html lang="en"><?php $adminPageTitle = 'Foundation Content'; include __DIR__ . '/includes/head.php'; ?><body class="sb-nav-fixed">
+<?php include __DIR__.'/includes/topheader.php'; ?><div id="layoutSidenav"><div id="layoutSidenav_nav"><?php include __DIR__.'/includes/sidebar.php'; ?></div><div id="layoutSidenav_content"><main><div class="container-fluid px-4"><div class="admin-page-heading mt-4"><div><span class="admin-eyebrow">Yati Foundation</span><h1>Foundation content</h1><p>Manage programs, verified impact figures, and public reports.</p></div></div>
+<?php if ($notice !== ''): ?><div class="alert alert-info" role="status"><?php echo admin_h($notice); ?></div><?php endif; ?>
+<section class="card mb-4"><div class="card-header"><strong>Programs</strong></div><div class="card-body"><form method="post" class="row g-3 mb-4"><input type="hidden" name="csrf_token" value="<?php echo admin_h($csrf); ?>"><input type="hidden" name="action" value="save_program"><input type="hidden" name="id" value="0"><div class="col-md-4"><label class="form-label">Title</label><input class="form-control" name="title" required></div><div class="col-md-8"><label class="form-label">Short summary</label><input class="form-control" name="summary" required maxlength="500"></div><div class="col-md-8"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="2"></textarea></div><div class="col-md-2"><label class="form-label">Icon class</label><input class="form-control" name="icon" value="fa-heart"></div><div class="col-md-1"><label class="form-label">Order</label><input class="form-control" name="sortOrder" type="number" value="0"></div><div class="col-md-1 d-flex align-items-end"><button class="btn btn-admin-primary">Add</button></div><div class="col-12 form-check ms-2"><input class="form-check-input" type="checkbox" name="isPublished" checked id="prog-pub"><label class="form-check-label" for="prog-pub">Published</label></div></form>
+<?php while ($p = mysqli_fetch_assoc($programs)): ?><form method="post" class="row g-2 align-items-center border-top py-3"><input type="hidden" name="csrf_token" value="<?php echo admin_h($csrf); ?>"><input type="hidden" name="action" value="save_program"><input type="hidden" name="id" value="<?php echo (int)$p['programId']; ?>"><div class="col-md-3"><input class="form-control" name="title" value="<?php echo admin_h($p['title']); ?>" required></div><div class="col-md-4"><input class="form-control" name="summary" value="<?php echo admin_h($p['summary']); ?>" required></div><div class="col-md-3"><input class="form-control" name="description" value="<?php echo admin_h($p['description']); ?>"></div><div class="col-md-2 d-flex gap-2"><button class="btn btn-outline-primary btn-sm">Save</button></div><input type="hidden" name="icon" value="<?php echo admin_h($p['icon']); ?>"><input type="hidden" name="sortOrder" value="<?php echo (int)$p['sortOrder']; ?>"><?php if ($p['isPublished']): ?><input type="hidden" name="isPublished" value="1"><?php endif; ?><button class="btn btn-link btn-sm" form="delp<?php echo (int)$p['programId']; ?>">Archive</button></form><form id="delp<?php echo (int)$p['programId']; ?>" method="post"><input type="hidden" name="csrf_token" value="<?php echo admin_h($csrf); ?>"><input type="hidden" name="action" value="delete_program"><input type="hidden" name="id" value="<?php echo (int)$p['programId']; ?>"></form><?php endwhile; ?></div></section>
+<section class="card mb-4"><div class="card-header"><strong>Verified impact figures</strong></div><div class="card-body"><p class="text-muted">Only publish figures that have been checked against foundation records.</p><form method="post" class="row g-3 mb-3"><input type="hidden" name="csrf_token" value="<?php echo admin_h($csrf); ?>"><input type="hidden" name="action" value="save_metric"><input type="hidden" name="id" value="0"><div class="col-md-3"><input class="form-control" name="label" placeholder="Metric label" required></div><div class="col-md-2"><input class="form-control" type="number" min="0" name="metricValue" placeholder="Value" required></div><div class="col-md-2"><input class="form-control" name="suffix" placeholder="Suffix (e.g. +)"></div><div class="col-md-2"><input class="form-control" name="icon" value="fa-chart-line"></div><div class="col-md-1"><input class="form-control" type="number" name="sortOrder" value="0"></div><div class="col-md-2"><label class="form-check"><input class="form-check-input" type="checkbox" name="isPublished"><span class="form-check-label">Publish</span></label><button class="btn btn-admin-primary btn-sm">Add metric</button></div></form><?php while ($m=mysqli_fetch_assoc($metrics)): ?><form method="post" class="row g-2 align-items-center border-top py-2"><input type="hidden" name="csrf_token" value="<?php echo admin_h($csrf); ?>"><input type="hidden" name="action" value="save_metric"><input type="hidden" name="id" value="<?php echo (int)$m['metricId']; ?>"><div class="col-md-3"><input class="form-control" name="label" value="<?php echo admin_h($m['label']); ?>"></div><div class="col-md-2"><input class="form-control" type="number" min="0" name="metricValue" value="<?php echo (int)$m['metricValue']; ?>"></div><div class="col-md-2"><input class="form-control" name="suffix" value="<?php echo admin_h($m['suffix']); ?>"></div><div class="col-md-2"><input class="form-control" name="icon" value="<?php echo admin_h($m['icon']); ?>"></div><div class="col-md-1"><input class="form-control" type="number" name="sortOrder" value="<?php echo (int)$m['sortOrder']; ?>"></div><div class="col-md-2"><label class="form-check"><input class="form-check-input" type="checkbox" name="isPublished" <?php echo $m['isPublished']?'checked':''; ?>><span class="form-check-label">Publish</span></label><button class="btn btn-outline-primary btn-sm">Save</button></div></form><?php endwhile; ?></div></section>
+<section class="card mb-4"><div class="card-header"><strong>Public reports (PDF, up to 10 MB)</strong></div><div class="card-body"><form method="post" enctype="multipart/form-data" class="row g-3 mb-4"><input type="hidden" name="csrf_token" value="<?php echo admin_h($csrf); ?>"><input type="hidden" name="action" value="add_report"><div class="col-md-4"><input class="form-control" name="title" placeholder="Report title" required></div><div class="col-md-2"><input class="form-control" name="category" value="Annual report"></div><div class="col-md-2"><input class="form-control" type="number" name="reportYear" value="<?php echo date('Y'); ?>" required></div><div class="col-md-3"><input class="form-control" type="file" name="file" accept="application/pdf,.pdf" required></div><div class="col-md-1"><button class="btn btn-admin-primary">Publish</button></div><div class="col-12"><textarea class="form-control" name="description" placeholder="Short description"></textarea></div></form><?php while ($r=mysqli_fetch_assoc($reports)): ?><div class="d-flex justify-content-between align-items-center border-top py-2"><span><?php echo admin_h($r['title']).' · '.(int)$r['reportYear']; ?></span><form method="post"><input type="hidden" name="csrf_token" value="<?php echo admin_h($csrf); ?>"><input type="hidden" name="action" value="delete_report"><input type="hidden" name="id" value="<?php echo (int)$r['reportId']; ?>"><button class="btn btn-outline-danger btn-sm">Archive</button></form></div><?php endwhile; ?></div></section>
+</div></main></div></div><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script><script src="js/scripts.js"></script></body></html>

@@ -1,78 +1,62 @@
-# Yati Foundation
+# yatifoundation.alekh.dev
+
+## Overview
 
 A modern, fully responsive website for **Yati Foundation**, a non-profit organisation
-working in education, healthcare and community livelihoods.
 
-Built with **PHP + MySQL** and a custom, mobile-first front-end on top of Bootstrap 5.
+## Technology stack
 
-## ✨ Features
+- PHP
 
-- Modern, responsive design (mobile, tablet, desktop) with a custom design system
-- Dynamic hero slider, impact counters, gallery lightbox and news cards
-- Public pages: Home, About, Volunteer, Donate, Gallery, News, Contact
-- Admin dashboard to manage sliders, gallery, news, donations, volunteers and contacts
-- Secure backend: prepared statements, hashed passwords and validated file uploads
+## Repository structure
 
-## 🛠️ Tech Stack
+- `.gitignore`
+- `aboutus.php`
+- `contactus.php`
+- `donate.php`
+- `gallery.php`
+- `Includes/code.php`
+- `Includes/db.php`
+- `Includes/footer.php`
+- `Includes/head.php`
+- `Includes/header.php`
+- `LICENSE`
 
-| Layer     | Technology                          |
-| :-------- | :---------------------------------- |
-| Backend   | PHP 8 (mysqli, prepared statements) |
-| Database  | MySQL / MariaDB                     |
-| Front-end | Bootstrap 5.3 + custom CSS/JS       |
-| Server    | Apache (XAMPP)                      |
+## Setup
 
-## 🚀 Getting Started (XAMPP)
+1. Place the project in your XAMPP `htdocs` directory and start Apache and MySQL.
+2. Restore the existing `yatifoundation` database and its core tables from your database backup. Then apply the migration described below; this repository does not include a full database backup.
+3. The default local connection is `localhost`, MySQL user `root`, an empty password, and database `yatifoundation`. Override these with `DB_HOST`, `DB_USER`, `DB_PASS`, and `DB_NAME` environment variables when needed.
+4. Visit the project through `http://localhost/<project-folder>/`.
+5. Open `http://localhost/<project-folder>/admin/` to sign in. For the included default admin account, use `admin@gmail.com` / `admin@123` and change the password immediately.
 
-1. Place this folder inside `htdocs/` (e.g. `xampp/htdocs/YatiFoundation`).
-2. Start **Apache** and **MySQL** from the XAMPP control panel.
-3. Open **phpMyAdmin** and create a database named `yatifoundation`.
-4. Import the schema from [`Database/database.php`](Database/database.php).
-5. Visit `http://localhost/YatiFoundation/`.
+Uploaded news, gallery, slider, and volunteer profile images are stored in `admin/upload`; keep that directory writable by PHP.
 
-### Database configuration
+## Search engine files
 
-Connection settings live in [`Includes/db.php`](Includes/db.php) and default to the
-standard XAMPP values (`localhost` / `root` / no password). For production you can
-override them with environment variables: `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME`.
+- `sitemap.xml` lists the public website pages. Update its URLs if the production domain changes.
+- `robots.txt` keeps admin pages and form handlers out of search crawls and points crawlers to the sitemap.
 
-### Admin access
+## Development notes
 
-- URL: `http://localhost/YatiFoundation/admin/`
-- Email: `admin@gmail.com`
-- Password: `admin@123`
+- Never commit secrets, access tokens, passwords, or production environment files.
+- Check configuration and dependency manifests before deploying.
 
-> The default password is stored as a bcrypt hash. **Change it after first login**
-> via the admin panel's *Change Password* page.
+## License
 
-## 📁 Project Structure
+Check this repository for a LICENSE file before redistributing or reusing the project.
+## Foundation content features
 
-```text
-/
-├── index.php              # Home page
-├── AboutUs.php            # About page
-├── Donate.php             # Donation form
-├── Vounteer.php           # Volunteer form
-├── Gallery.php            # Gallery
-├── News.php               # News & updates
-├── ContactUs.php          # Contact form + map
-├── Includes/
-│   ├── db.php             # DB connection + helpers (upload, flash)
-│   ├── head.php           # Shared <head> + preloader
-│   ├── header.php         # Responsive navbar + login modal
-│   ├── footer.php         # Shared footer + scripts
-│   └── code.php           # Public form handlers (secure)
-├── admin/                 # Admin dashboard (Bootstrap 5)
-├── assets/                # CSS, JS, images, fonts
-├── vendor/                # Bootstrap & jQuery
-└── Database/database.php  # SQL schema + seed data
-```
+Apply `Database/migrations/2026_10_26_foundation_features.sql` to the configured database before deploying this version. It creates the programs, impact metrics, and reports tables and adds follow-up status columns to the existing submission tables. Existing donations and volunteer applications begin as `Pending`; existing messages begin as `New`.
 
-## 🔒 Security notes
+Admin pages: `admin/foundationcontent.php` manages programs, verified homepage metrics, and public PDF reports; `admin/submissionstatus.php` tracks incoming requests. Programs and reports are published from `/programs.php` and `/reports.php`.
 
-This codebase was hardened from its original form:
+Apply `Database/migrations/2026_10_27_donation_payments.sql` after the foundation content migration to add payment-provider transaction tracking.
 
-- All SQL uses **prepared statements** (no more string-concatenated queries).
-- Admin passwords are **bcrypt-hashed**; legacy plaintext logins auto-upgrade.
-- Uploads are validated by **real MIME type** and stored with random filenames.
-- Admin pages enforce a **session guard**, and debug output was removed.
+The donation checkout supports Razorpay and Cashfree. Copy `.env.example` to the project-root `.env`, or configure the values in Admin → Payment settings. The admin page stores them in the ignored `.env` file; PHP loads it on each request. Payment options appear on the public donation form once the required provider credentials are saved. Use test credentials and Cashfree `sandbox` mode first. Set `SITE_BASE_URL` to the site's full public base URL; production callbacks and webhooks require public HTTPS.
+
+Settings: `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, `CASHFREE_APP_ID`, `CASHFREE_SECRET_KEY`, `CASHFREE_WEBHOOK_SECRET`, `CASHFREE_ENVIRONMENT` (`sandbox` or `production`), and `SITE_BASE_URL`. Secret inputs are masked; leaving them blank preserves the saved value, while the explicit clear checkbox removes it. Never commit or share live `.env` secrets. Apache is configured to deny web requests for `.env` files.
+
+Configure provider webhook URLs as `/payment/webhook.php?gateway=razorpay` and `/payment/webhook.php?gateway=cashfree`; use the corresponding webhook secrets. The server verifies provider responses before marking a donation `Received`. A payment must be captured/paid, not merely authorized or returned to the website.
+
+Complete provider merchant onboarding and enable automatic capture as required. Verify successful, failed, abandoned and delayed payment flows with sandbox credentials before accepting live donations.

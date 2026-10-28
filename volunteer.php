@@ -1,22 +1,24 @@
 <?php
+session_start();
+require_once __DIR__ . '/Includes/db.php';
 $pageTitle = 'Volunteer';
+$pageHeroEyebrow = 'Join our team';
+$pageHeroTitle = 'Give your time,';
+$pageHeroHighlight = 'change a life.';
+$pageHeroDescription = 'Share your time and skills with local programmes in education, health and community outreach.';
+$pageHeroAsideValue = 'Your time';
+$pageHeroAsideLabel = "Can create\nlasting change";
+$pageHeroAsideIcon = 'fa-users';
+$pageHeroCurrent = 'Volunteer';
 $pageDesc  = 'Volunteer with Yati Foundation and give your time and skills to causes that matter.';
 include 'Includes/head.php';
+include 'Includes/page-hero.php';
 ?>
-
-<section class="page-heading">
-    <div class="container">
-        <h1>Volunteer</h1>
-        <div class="breadcrumb-nav"><a href="index.php">Home</a> &nbsp;/&nbsp; Volunteer</div>
-    </div>
-</section>
 
 <section class="section-pad">
     <div class="container">
         <div class="row g-5">
             <div class="col-lg-5 reveal">
-                <span class="eyebrow">Join Our Team</span>
-                <h2 class="section-title">Give your time, change a life</h2>
                 <p>Our volunteers are the heart of Yati Foundation. Whether you can spare a few hours a week or join a
                     field project, there is a place for you. Share your skills, meet inspiring people, and be part of
                     real change.</p>
@@ -29,6 +31,7 @@ include 'Includes/head.php';
             <div class="col-lg-7 reveal">
                 <div class="form-card">
                     <form id="contact-form" action="Includes/code.php?msg=add-volunteer" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(public_csrf_token(), ENT_QUOTES, 'UTF-8'); ?>"><div class="d-none" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
                         <div class="row">
                             <div class="col-md-6">
                                 <fieldset>

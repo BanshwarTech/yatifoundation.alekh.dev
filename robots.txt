@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /Includes/
+Disallow: /payment/
+Disallow: /Database/
+
+Sitemap: https://yatifoundation.alekh.dev/sitemap.xml

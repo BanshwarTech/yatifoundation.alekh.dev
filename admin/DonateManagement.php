@@ -1,29 +1,16 @@
 <?php
-session_start();
-if (empty($_SESSION["loginAdmin"])) {
-    header("location:../index.php");
-    exit;
-}
+require_once __DIR__ . '/includes/admin_helpers.php';
+admin_require_auth();
 include_once('../Includes/db.php');
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>DonateManagement - Yati Foundation</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-    <link href="css/styles.css" rel="stylesheet" />
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-</head>
+<?php $adminPageTitle = 'Donation Management'; include __DIR__ . '/includes/head.php'; ?>
 
 <body class="sb-nav-fixed">
-    <?php include('../admin/includes/topHeader.php') ?>
+    <?php include('../admin/includes/topheader.php') ?>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
             <?php include('../admin/includes/sidebar.php') ?>
@@ -31,7 +18,7 @@ include_once('../Includes/db.php');
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Donate Management</h1><br>
+                    <div class="admin-page-heading admin-section-heading mt-4"><div><span class="admin-eyebrow">Yati Foundation</span><h1>Donate Management</h1><p>Review donations and donor information.</p></div></div>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
@@ -73,7 +60,7 @@ include_once('../Includes/db.php');
                                     $select = "select * from donate where isDel='1'";
                                     // echo $select;
                                     $result = mysqli_query($con, $select);
-                                    if (!$result == "") {
+                                    if ($result) {
                                         while ($row = mysqli_fetch_array($result)) {
                                             $count++;
                                             ?>
@@ -82,29 +69,35 @@ include_once('../Includes/db.php');
                                                     <?php echo $i++; ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $row['name'] ?>
+                                                    <?php echo admin_h($row['name']); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $row['mobile'] ?>
+                                                    <?php echo admin_h($row['mobile']); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $row['email'] ?>
+                                                    <?php echo admin_h($row['email']); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $row['amount'] ?>
+                                                    <?php echo admin_h($row['amount']); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $row['purposeofDonation'] ?>
+                                                    <?php echo nl2br(admin_h($row['purposeofDonation'])); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $row['address'] ?>
+                                                    <?php echo nl2br(admin_h($row['address'])); ?>
                                                 </td>
                                                 <td>
-                                                    <?php echo $row['addedOn'] ?>
+                                                    <?php echo admin_h($row['addedOn']); ?>
                                                 </td>
-                                                <td><a href="../admin/code.php?msg=delete-Donate&&id=<?php echo $row['dId'] ?>"><img
-                                                            src="delete-button-svgrepo-com (1).svg" alt="delete"
-                                                            height="32px"></a></td>
+                                                <td>
+                                                    <form action="code.php?msg=delete-Donate" method="post">
+                                                        <input type="hidden" name="csrf_token" value="<?php echo admin_h(admin_csrf_token()); ?>">
+                                                        <input type="hidden" name="id" value="<?php echo (int) $row['dId']; ?>">
+                                                        <button type="submit" class="btn btn-link p-0" aria-label="Delete donation">
+                                                            <img src="delete-button-svgrepo-com (1).svg" alt="" height="32">
+                                                        </button>
+                                                    </form>
+                                                </td>
 
                                             </tr>
                                             <?php
@@ -120,7 +113,7 @@ include_once('../Includes/db.php');
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                        <div class="text-muted">&copy; <?php echo date('Y'); ?> Yati Foundation</div>
                         <div>
                             <a href="#">Privacy Policy</a>
                             &middot;

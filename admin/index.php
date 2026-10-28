@@ -1,28 +1,15 @@
 <?php
-session_start();
-if (empty($_SESSION["loginAdmin"])) {
-    header("location:../index.php");
-    exit;
-}
+require_once __DIR__ . '/includes/admin_helpers.php';
+admin_require_auth();
 include_once('../Includes/db.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Dashboard - Yati Foundation</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-    <link href="css/styles.css" rel="stylesheet" />
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-</head>
+<?php $adminPageTitle = 'Dashboard'; include __DIR__ . '/includes/head.php'; ?>
 
 <body class="sb-nav-fixed">
-    <?php include('../admin/includes/topHeader.php') ?>
+    <?php include('../admin/includes/topheader.php') ?>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
             <?php include('../admin/includes/sidebar.php') ?>
@@ -30,85 +17,107 @@ include_once('../Includes/db.php');
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Dashboard</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Dashboard</li>
-                    </ol>
-                    <div class="row">
+                    <div class="admin-page-heading mt-4">
+                        <div>
+                            <span class="admin-eyebrow">Yati Foundation</span>
+                            <h1>Dashboard</h1>
+                            <p>Manage your foundation’s content and community activity.</p>
+                        </div>
+                        <a class="btn btn-admin-primary" href="volunteermanagement.php"><i class="fas fa-users me-2"></i>View volunteers</a>
+                    </div>
+                    <div class="admin-dashboard-grid row">
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body">Volunteer Management</div>
+                            <div class="card admin-dashboard-card mb-4">
+                                <div class="card-body"><span class="admin-dashboard-icon"><i class="fas fa-people-group"></i></span><span class="admin-dashboard-copy"><strong>Volunteer Management</strong><small>People supporting your mission</small></span></div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="VolunteerManagement.php">View
+                                    <a class="small text-white stretched-link" href="volunteermanagement.php">View
                                         Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-warning text-white mb-4">
-                                <div class="card-body">Donate Management</div>
+                            <div class="card admin-dashboard-card mb-4">
+                                <div class="card-body"><span class="admin-dashboard-icon"><i class="fas fa-hand-holding-heart"></i></span><span class="admin-dashboard-copy"><strong>Donation Management</strong><small>Review community contributions</small></span></div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="DonateManagement.php">View
+                                    <a class="small text-white stretched-link" href="donatemanagement.php">View
                                         Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-success text-white mb-4">
-                                <div class="card-body">Contact Management</div>
+                            <div class="card admin-dashboard-card mb-4">
+                                <div class="card-body"><span class="admin-dashboard-icon"><i class="fas fa-envelope"></i></span><span class="admin-dashboard-copy"><strong>Contact Management</strong><small>Read incoming messages</small></span></div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="ContactManagement.php">View
+                                    <a class="small text-white stretched-link" href="contactmanagement.php">View
                                         Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-danger text-white mb-4">
-                                <div class="card-body">Add News</div>
+                            <div class="card admin-dashboard-card mb-4">
+                                <div class="card-body"><span class="admin-dashboard-icon"><i class="fas fa-pen-to-square"></i></span><span class="admin-dashboard-copy"><strong>Publish News</strong><small>Share the latest foundation updates</small></span></div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="AddNews.php">View Details</a>
+                                    <a class="small text-white stretched-link" href="addnews.php">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-secondary text-white mb-4">
-                                <div class="card-body"> News Management</div>
+                            <div class="card admin-dashboard-card mb-4">
+                                <div class="card-body"><span class="admin-dashboard-icon"><i class="fas fa-newspaper"></i></span><span class="admin-dashboard-copy"><strong>News Management</strong><small>Edit and organize news articles</small></span></div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="NewsManagement.php">View
+                                    <a class="small text-white stretched-link" href="newsmanagement.php">View
                                         Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-info text-white mb-4">
-                                <div class="card-body"> Change Password</div>
+                            <div class="card admin-dashboard-card mb-4">
+                                <div class="card-body"><span class="admin-dashboard-icon"><i class="fas fa-shield-halved"></i></span><span class="admin-dashboard-copy"><strong>Account Security</strong><small>Update your admin password</small></span></div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="ChangePassword.php">View
+                                    <a class="small text-white stretched-link" href="changepassword.php">View
                                         Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-dark text-white mb-4">
-                                <div class="card-body">Add Slider</div>
+                            <div class="card admin-dashboard-card mb-4">
+                                <div class="card-body"><span class="admin-dashboard-icon"><i class="fas fa-image"></i></span><span class="admin-dashboard-copy"><strong>Add Gallery Image</strong><small>Upload a new foundation photo</small></span></div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="AddSlider.php">View Details</a>
+                                    <a class="small text-white stretched-link" href="addgallery.php">Add Image</a>
+                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card admin-dashboard-card mb-4">
+                                <div class="card-body"><span class="admin-dashboard-icon"><i class="fas fa-images"></i></span><span class="admin-dashboard-copy"><strong>Gallery Management</strong><small>Manage published photos</small></span></div>
+                                <div class="card-footer d-flex align-items-center justify-content-between">
+                                    <a class="small text-white stretched-link" href="gallerymanagement.php">View Details</a>
+                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card admin-dashboard-card mb-4">
+                                <div class="card-body"><span class="admin-dashboard-icon"><i class="fas fa-panorama"></i></span><span class="admin-dashboard-copy"><strong>Add Homepage Slider</strong><small>Feature a new homepage story</small></span></div>
+                                <div class="card-footer d-flex align-items-center justify-content-between">
+                                    <a class="small text-white stretched-link" href="addslider.php">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-light text-dark mb-4">
-                                <div class="card-body">Slider Management</div>
+                            <div class="card admin-dashboard-card mb-4">
+                                <div class="card-body"><span class="admin-dashboard-icon"><i class="fas fa-photo-film"></i></span><span class="admin-dashboard-copy"><strong>Slider Management</strong><small>Organize homepage slides</small></span></div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-dark stretched-link" href="SliderManagement.php">View
+                                    <a class="small text-dark stretched-link" href="slidermanagement.php">View
                                         Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                                 </div>
@@ -122,7 +131,7 @@ include_once('../Includes/db.php');
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                        <div class="text-muted">&copy; <?php echo date('Y'); ?> Yati Foundation</div>
                         <div>
                             <a href="#">Privacy Policy</a>
                             &middot;

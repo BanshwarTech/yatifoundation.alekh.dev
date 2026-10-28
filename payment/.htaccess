@@ -1,0 +1,4 @@
+Options -Indexes
+<Files "gateways.php">
+    Require all denied
+</Files>
