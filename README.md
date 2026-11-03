@@ -51,6 +51,8 @@ Apply `Database/migrations/2026_10_26_foundation_features.sql` to the configured
 
 Admin pages: `admin/foundationcontent.php` manages programs, verified homepage metrics, and public PDF reports; `admin/submissionstatus.php` tracks incoming requests. Programs and reports are published from `/programs.php` and `/reports.php`.
 
+To preview the public reports layout, apply `Database/migrations/2026_11_03_sample_public_report.sql` after the foundation content migration. It adds a clearly labelled sample report and links to `admin/reports/sample-community-update-2026.pdf`. The PDF is illustrative only and contains no real financial or impact figures; archive the sample from Foundation content when it is no longer needed.
+
 Apply `Database/migrations/2026_10_27_donation_payments.sql` after the foundation content migration to add payment-provider transaction tracking.
 
 The donation checkout supports Razorpay and Cashfree. Copy `.env.example` to the project-root `.env`, or configure the values in Admin → Payment settings. The admin page stores them in the ignored `.env` file; PHP loads it on each request. Payment options appear on the public donation form once the required provider credentials are saved. Use test credentials and Cashfree `sandbox` mode first. Set `SITE_BASE_URL` to the site's full public base URL; production callbacks and webhooks require public HTTPS.
