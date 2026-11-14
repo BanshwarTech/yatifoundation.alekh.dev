@@ -43,7 +43,6 @@
         <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
             <span>&copy; <?php echo date('Y'); ?> Yati Foundation. All rights reserved.</span>
             <div class="footer-bottom-links">
-                <a href="sitemap.xml">Sitemap</a>
                 <span>Made with <i class="fa fa-heart" aria-hidden="true"></i> for a better world.</span>
             </div>
         </div>
