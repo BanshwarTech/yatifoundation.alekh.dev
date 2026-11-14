@@ -45,9 +45,9 @@ include 'Includes/head.php';
                                 </div>
                             </div>
                             <div class="hero-visual">
-                                <img src="<?php echo htmlspecialchars($slideImage, ENT_QUOTES, 'UTF-8'); ?>"
+                                <img <?php if ($i === 0): ?>src="<?php echo htmlspecialchars($slideImage, ENT_QUOTES, 'UTF-8'); ?>" fetchpriority="high" loading="eager"<?php else: ?>data-src="<?php echo htmlspecialchars($slideImage, ENT_QUOTES, 'UTF-8'); ?>"<?php endif; ?>
                                     alt="<?php echo htmlspecialchars($row['title'] . ': ' . $row['quots'], ENT_QUOTES, 'UTF-8'); ?>"
-                                    <?php echo $i === 0 ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"'; ?> decoding="async">
+                                    decoding="async">
                                 <span class="hero-visual-shade"></span>
                                 <span class="hero-visual-caption"><i class="fa fa-heart"></i> Hope grows when we work
                                     together</span>

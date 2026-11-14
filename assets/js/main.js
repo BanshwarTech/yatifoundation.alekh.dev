@@ -75,6 +75,11 @@
             if (nextIndex === heroIndex) { scheduleHero(); return; }
             var previous = heroSlides[heroIndex];
             var next = heroSlides[nextIndex];
+            var nextImage = next.querySelector(".hero-visual img[data-src]");
+            if (nextImage) {
+                nextImage.src = nextImage.getAttribute("data-src");
+                nextImage.removeAttribute("data-src");
+            }
             window.clearTimeout(heroCleanupTimers.get(previous));
             window.clearTimeout(heroCleanupTimers.get(next));
             next.classList.remove("is-leaving");
