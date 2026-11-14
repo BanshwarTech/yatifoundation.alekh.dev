@@ -1,0 +1,6 @@
+<FilesMatch "^\.env(?:\..*)?$">
+    Require all denied
+</FilesMatch>
+
+RewriteEngine On
+RewriteRule ^(about-us|contact-us|donate|gallery|news|programs|reports|volunteer)/?$ $1.php [L]

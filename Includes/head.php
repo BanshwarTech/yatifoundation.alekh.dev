@@ -16,6 +16,9 @@ $seoOverrides = array_filter([
 });
 $seoMetadata = public_seo_metadata($seoOverrides);
 $seoStructuredData = public_seo_structured_data($seoMetadata);
+$robotsDirective = basename((string) ($_SERVER['SCRIPT_NAME'] ?? 'index.php')) === 'index.php'
+    ? 'index, follow, max-image-preview:large'
+    : 'noindex, follow';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,7 +27,7 @@ $seoStructuredData = public_seo_structured_data($seoMetadata);
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="<?php echo htmlspecialchars($seoMetadata['description'], ENT_QUOTES, 'UTF-8'); ?>">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="robots" content="<?php echo htmlspecialchars($robotsDirective, ENT_QUOTES, 'UTF-8'); ?>">
     <meta name="theme-color" content="#f35525">
     <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg?v=2">
     <link rel="canonical" href="<?php echo htmlspecialchars($seoMetadata['canonical'], ENT_QUOTES, 'UTF-8'); ?>">
